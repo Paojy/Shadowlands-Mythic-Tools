@@ -1,0 +1,10 @@
+﻿## Interface: 70300
+## Title: |cff87CEFASkyline|r Mythic+ Tools
+## Title-zhCN: |cff87CEFASkyline|r 大秘境助手
+## Version: 1.00
+## Author: Paopao001
+## SavedVariables: SMT_DB
+## SavedVariablesPerCharacter: SMT_CDB
+
+libs\load_libs.xml
+load.xml

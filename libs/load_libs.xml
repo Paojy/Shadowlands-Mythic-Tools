@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Include file="LibStub\libstub.lua"/>
+	<Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
+	<Include file="AceAddon-3.0\AceAddon-3.0.xml"/>
+	<Include file="LibGroupInSpecT-1.1\lib.xml"/>
+</Ui>

@@ -1,0 +1,13 @@
+------------------------------------------------------------------------
+r79 | tercioo | 2016-07-18 19:47:24 +0000 (Mon, 18 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/LibGroupInSpecT-1.1.lua
+
+Quick fix for Legion Pre-Patch: NUM_GLYPH_SLOTS doesn't exists any more.
+------------------------------------------------------------------------
+r78 | greltok | 2015-02-21 05:13:59 +0000 (Sat, 21 Feb 2015) | 1 line
+Changed paths:
+   M /trunk/LibGroupInSpecT-1.1.lua
+
+Added event "GroupInSpecT_InspectReady".  :Rescan() adds units to staleq rather than mainq.
+------------------------------------------------------------------------

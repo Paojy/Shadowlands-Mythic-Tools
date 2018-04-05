@@ -1,0 +1,18 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="core\init.lua"/>
+	
+	<Script file="local\enUS.lua"/>	
+	<Script file="local\zhCN.lua"/>
+	<Script file="local\zhTW.lua"/>
+	
+	<Script file="core\api.lua"/>
+	<Script file="core\db.lua"/>
+	<Script file="core\gui.lua"/>
+	<Script file="core\moving.lua"/>
+	<Script file="core\core.lua"/>
+	<Script file="core\cd_icons.lua"/>
+	
+	<Script file="npc.lua"/>
+	<!--<Script file="test.lua"/>-->
+	<Script file="data.lua"/>
+</Ui>
