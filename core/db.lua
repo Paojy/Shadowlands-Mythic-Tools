@@ -51,6 +51,7 @@ local Character_default_Settings = {
 		icon_space = 4,
 		icon_num = 4,
 		grow_dir = "RIGHT",
+		hide_in_raid = true,
 		x = 5,
 		y = 0,
 		alpha = .2,

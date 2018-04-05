@@ -2360,7 +2360,7 @@ G.Dungeons[721] = { -- 英灵殿
 				["1041_com_hl_198595"] = {}, -- 雷霆飞弹	
 			},
 			HLOnRaid = {
-				["1045_198595_c"] = "HL_Casting", -- 雷霆飞弹	
+				["1041_198595_c"] = "HL_Casting", -- 雷霆飞弹	
 			},
 			PlateAlert = {
 				[198595] = "PlateSpells", -- 雷霆飞弹	
@@ -2436,8 +2436,8 @@ G.Dungeons[721] = { -- 英灵殿
 
 			},
 			HLOnRaid = {
-				["1045_198962_c"] = "HL_Casting", -- 破碎符文
-				["1045_198959_c"] = "HL_Casting", -- 蚀刻	
+				["1041_198962_c"] = "HL_Casting", -- 破碎符文
+				["1041_198959_c"] = "HL_Casting", -- 蚀刻	
 			},
 			PlateAlert = {
 				[198962] = "PlateSpells", -- 破碎符文
@@ -2521,8 +2521,8 @@ G.Dungeons[721] = { -- 英灵殿
 		img = 1410959,
 		alerts = {
 			AlertIcon = {
-				["1041_aura_no_192133"] = {"HELPFUL", "boss1"}, -- 秘法师加护：光
-				["1041_aura_no_192132"] = {"HELPFUL", "boss1"}, -- 秘法师加护：雷
+				["1041_aura_no_192133"] = {"HARMFUL", "boss1"}, -- 秘法师加护：光
+				["1041_aura_no_192132"] = {"HARMFUL", "boss1"}, -- 秘法师加护：雷
 				["1041_aura_no_200901"] = {"HELPFUL", "boss1"}, -- 风暴之眼
 				["1041_aura_no_192307"] = {"HELPFUL", "boss1"}, -- 圣洁庇护
 				["1041_cast_no_192018"] = {}, -- 光明之盾
@@ -2533,7 +2533,7 @@ G.Dungeons[721] = { -- 英灵殿
 				
 			},
 			HLOnRaid = {
-				["1045_191976_c"] = "HL_Casting", -- 弧光箭
+				["1041_191976_c"] = "HL_Casting", -- 弧光箭
 			},
 		},
 	},
@@ -2596,7 +2596,7 @@ G.Dungeons[721] = { -- 英灵殿
 
 			},
 			HLOnRaid = {
-				["1045_199674_c"] = "HL_Casting", -- 邪恶短匕
+				["1041_199674_c"] = "HL_Casting", -- 邪恶短匕
 			},
 			PlateAlert = {
 				[199674] = "PlateSpells", -- 邪恶短匕
@@ -2649,7 +2649,7 @@ G.Dungeons[721] = { -- 英灵殿
 				["1041_com_no_193668"] = {}, -- 狂野之剑
 			},
 			HLOnRaid = {
-				["1045_193659_c"] = "HL_Casting", -- 邪炽冲刺
+				["1041_193659_c"] = "HL_Casting", -- 邪炽冲刺
 			},
 		},
 	},
@@ -2950,6 +2950,11 @@ G.Dungeons[767] = { -- 奈萨里奥的巢穴
 	},
 	{ -- 熔火焦皮
 		id = 101476,
+		alerts = {
+			PlateAlert = {
+				[200672] = "PlateAuras", -- 水晶迸裂
+			},
+		},
 		cd = {
 			[200154] = 1, -- 燃烧之恨
 		},

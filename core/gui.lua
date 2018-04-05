@@ -227,7 +227,9 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 			end)
 			
 			frame[k]:SetScript("OnClick", function(self)
+			
 				if self:GetChecked() then
+					
 					SMT_CDB[t1][t2][value] = k
 					if frame.apply then
 						frame:apply()
@@ -257,15 +259,13 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 	for i = 1, #group do
 	
 		local k = group[i][1]
-		local v = group[i][2]
 		
 		frame[k]:HookScript("OnClick", function(self)
 			if (t2 and SMT_CDB[t1][t2][value] == k) or (not t2 and SMT_CDB[t1][value] == k) then
-				for i = 1, #group do
-					key = group[i][1]
-					value = group[i][2]
-					if key ~= k then
-						frame[key]:SetChecked(false)
+				for index = 1, #group do
+					local j = group[index][1]
+					if j ~= k then
+						frame[j]:SetChecked(false)
 					end
 				end
 			end
@@ -771,10 +771,10 @@ options.AlertFrame_enable = createcheckbutton(options, 40, -160, L["启用"], "A
 options.AlertFrame_enable.apply = function() T.EditAlertFrame("enable") end
 
 local growdirection_group = {
-	{"BOTTOM", L["上"]},
-	{"TOP",    L["下"]},
+	{"RIGHT",  L["左"]},	
 	{"LEFT",   L["右"]},
-	{"RIGHT",  L["左"]},
+	{"BOTTOM", L["上"]},
+	{"TOP",    L["下"]},	
 }
 options.AlertFrame_grow_dir = createradiobuttongroup(options, 150, -166, L["排列方向"], "AlertFrame", false, "grow_dir", growdirection_group)
 options.AlertFrame_grow_dir.apply = function() T.EditAlertFrame("grow_dir") end
@@ -879,13 +879,11 @@ T.CreateTitle(options, L["小队减伤CD"], -750)
 options.CD_Icons_enable = createcheckbutton(options, 40, -780, L["启用"], "CD_Icons", false, "enable")
 options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
 
-local growdirection_group2 = {
-	{"LEFT", L["左"]},
-	{"RIGHT", L["右"]},
-}
-
-options.CD_Icons_grow_dir = createradiobuttongroup(options, 150, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group2)
+options.CD_Icons_grow_dir = createradiobuttongroup(options, 150, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
 options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
+
+options.CD_Icons_hideinraid = createcheckbutton(options, 380, -780, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
+options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
 
 options.CD_Icons_size = createslider(options, 60, -820, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
 options.CD_Icons_size.apply = function() T.EditCDBar("size") end

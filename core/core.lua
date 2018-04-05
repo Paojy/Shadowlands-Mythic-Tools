@@ -1939,7 +1939,9 @@ local function UpdateSpellIcon(event, event_SpellID, button, unit, spellID, cd)
 end
 
 local function UpdateSpells(unitFrame, event, event_SpellID)
+	if not unitFrame.unit or SMT_CDB["General"]["disable_all"] or not SMT_CDB["PlateAlerts"]["enable"] then return end
 	local i = 1
+	
 	if G.Npc[unitFrame.npcID] then
 		for spellID, cd in pairs(G.Npc[unitFrame.npcID]) do
 			local unit = unitFrame.unit
