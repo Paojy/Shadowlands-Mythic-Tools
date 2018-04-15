@@ -59,6 +59,7 @@ local DefensiveSpells = {
 	
 	["DEMONHUNTER"] = {
 		["196555"] = {spellID = 196555, cd = 120, spec = 577, talent = 21863}, -- 虚空行走 浩劫
+		["198589"] = {spellID = 198589, cd = 60, spec = 577, talent = "all"}, -- 疾影 浩劫
 	},
 	
 	["HUNTER"] = {
@@ -403,6 +404,8 @@ local function CreateCDBar(unit)
 								f.icons[i]["cd"]:SetCooldown(info["start"], info["dur"])
 								f.icons[i]["count"]:SetText("")
 							end
+						else
+							f.icons[i]["cd"]:SetCooldown(0,0)		
 						end
 						break
 					end
@@ -556,7 +559,7 @@ function party_cd:OnRemove(guid)
 	end
 end
 
-local LGIST=LibStub:GetLibrary("LibGroupInSpecT-1.1")
+local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
 
 function party_cd:OnInitialize()
 	LGIST.RegisterCallback (party_cd, "GroupInSpecT_Update", function(event, ...)
@@ -607,13 +610,23 @@ Group_Update:SetScript("OnEvent", function(self, event, ...)
 		
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 	
-		local _, event_type, _, _, sourceName, _, _, _, _, _, _, spellID = ...
+		local _, event_type, _, sourceGUID, sourceName, _, _, _, _, _, _, spellID = ...
 		
 		if not sourceName or not spellID then return end
 		local name = string.split("-", sourceName)
 		if event_type == "SPELL_CAST_SUCCESS" and party_cd['Roster'][name] and party_cd['Roster'][name][spellID] then
 			party_cd['Roster'][name][spellID]["start"] = GetTime()
 			UpdateCD(name, spellID)
+			if spellID == 235219 then -- 急速冷却
+				party_cd['Roster'][name][45438]["start"] = 0 -- 寒冰屏障
+				UpdateCD(name, 45438)
+			end
+		elseif event_type == "SPELL_AURA_APPLIED" and party_cd['Roster'][name] and spellID == 162264 then -- 恶魔变形
+			local info = LGIST:GetCachedInfo (sourceGUID)
+			if info.talents[22767] then -- 恶魔重生
+				party_cd['Roster'][name][198589]["start"] = 0 -- 疾影
+				UpdateCD(name, 198589)
+			end
 		end
 		
 	end
