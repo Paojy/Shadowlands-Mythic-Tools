@@ -154,6 +154,12 @@ T.CreateAlertIcon = function(v, r, g, b)
 	frame.bottomtext:SetTextColor(1, 1, 0)
 	frame.bottomtext:SetText(frame.spell_name)
 	
+	frame.toptext = T.createtext(frame, "OVERLAY", 25, "OUTLINE", "CENTER")
+	frame.toptext:SetPoint("TOPLEFT", frame, "TOPLEFT", -2, -10)
+	frame.toptext:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 2, -10)
+	frame.toptext:SetHeight(25)
+	frame.toptext:SetTextColor(0, 1, 1)
+	
 	frame.text = T.createtext(frame, "OVERLAY", 40, "OUTLINE", "LEFT")
 	frame.text:SetTextColor(r, g, b)
 	
@@ -785,6 +791,8 @@ T.CreateCast = function(option_page, v)
 		frame:Hide()
 		frame.exp = false
 		frame.target = false
+		frame.source = {}
+		frame.count = 0
 	end
 	
 	frame.update_onedit = function(option)
@@ -839,24 +847,67 @@ T.CreateCast = function(option_page, v)
 			local Unit, Spell, _, _, SpellID = ...
 			if SpellID == frame.spell_id then
 				if e == "UNIT_SPELLCAST_CHANNEL_START" then -- 开始引导
-					local endTimeMS = select(6, UnitChannelInfo(Unit))
-					frame.exp = endTimeMS/1000
-					frame.source = UnitGUID(Unit)
-					frame:Show()
-				elseif e == "UNIT_SPELLCAST_START" then -- 开始施法
-					local endTimeMS = select(6, UnitCastingInfo(Unit))
-					frame.exp = endTimeMS/1000
-					frame.source = UnitGUID(Unit)
-					frame:Show()
-				elseif e == "UNIT_SPELLCAST_SUCCEEDED" then
-					if not UnitChannelInfo(Unit) and frame.cast_time == 0 then -- 瞬发法术
-						frame.exp = GetTime()+3
-						frame.source = UnitGUID(Unit)
+					if not frame.source[UnitGUID(Unit)] then
+						local endTimeMS = select(6, UnitChannelInfo(Unit))
+						frame.exp = endTimeMS/1000
+						frame.source[UnitGUID(Unit)] = true
+						frame.count = frame.count + 1
+						if frame.count > 1 then
+							frame.toptext:SetText(frame.count)
+						else
+							frame.toptext:SetText("")
+						end
 						frame:Show()
 					end
+				elseif e == "UNIT_SPELLCAST_START" then -- 开始施法
+					if not frame.source[UnitGUID(Unit)] then
+						local endTimeMS = select(6, UnitCastingInfo(Unit))
+						frame.exp = endTimeMS/1000
+						frame.source[UnitGUID(Unit)] = true
+						frame.count = frame.count + 1
+						if frame.count > 1 then
+							frame.toptext:SetText(frame.count)
+						else
+							frame.toptext:SetText("")
+						end
+						frame:Show()
+					end
+				elseif e == "UNIT_SPELLCAST_SUCCEEDED" then
+					if not frame.source[UnitGUID(Unit)] then
+						if not UnitChannelInfo(Unit) and frame.cast_time == 0 then -- 瞬发法术
+							frame.exp = GetTime()+2
+							frame.source[UnitGUID(Unit)] = true
+							frame.count = frame.count + 1
+							if frame.count > 1 then
+								frame.toptext:SetText(frame.count)
+							else
+								frame.toptext:SetText("")
+							end
+							C_Timer.After(2, function()
+								frame.count = frame.count - 1
+								frame.source[UnitGUID(Unit)] = nil
+								if frame.count > 1 then
+									frame.toptext:SetText(frame.count)
+								elseif frame.count == 1 then
+									frame.toptext:SetText("")
+								else
+									frame.reset()
+								end
+							end)
+							frame:Show()
+						end
+					end
 				elseif e == "UNIT_SPELLCAST_CHANNEL_STOP" or e == "UNIT_SPELLCAST_STOP" then
-					if frame.source and UnitGUID(Unit) == frame.source then
-						frame.reset()
+					if frame.source[UnitGUID(Unit)] then
+						frame.source[UnitGUID(Unit)] = nil
+						frame.count = frame.count - 1
+						if frame.count > 1 then
+							frame.toptext:SetText(frame.count)
+						elseif frame.count == 1 then
+							frame.toptext:SetText("")
+						else
+							frame.reset()
+						end
 					end
 				end
 			end
@@ -906,7 +957,8 @@ T.CreateCastingOnMe = function(option_page, v)
 	frame.reset = function()
 		frame:Hide()
 		frame.exp = false
-		frame.source = false
+		frame.source = {}
+		frame.count = 0
 	end
 	
 	frame.update_onedit = function(option)
@@ -962,29 +1014,45 @@ T.CreateCastingOnMe = function(option_page, v)
 			if SpellID == frame.spell_id then
 				if e == "UNIT_SPELLCAST_CHANNEL_START" then -- 开始引导
 					C_Timer.After(.1, function()
-						if UnitIsUnit(Unit.."target", "player") then
+						if UnitIsUnit(Unit.."target", "player") and not frame.source[UnitGUID(Unit)] then
 							local endTimeMS = select(6, UnitChannelInfo(Unit))
-							if endTimeMS then
-								frame.exp = endTimeMS/1000
-								frame.source = UnitGUID(Unit)
-								frame:Show()
+							frame.exp = endTimeMS/1000
+							frame.source[UnitGUID(Unit)] = true
+							frame.count = frame.count + 1
+							if frame.count > 1 then
+								frame.toptext:SetText(frame.count)
+							else
+								frame.toptext:SetText("")
 							end
+							frame:Show()
 						end
 					end)
 				elseif e == "UNIT_SPELLCAST_START" then -- 开始施法
 					C_Timer.After(.1, function()
-						if UnitIsUnit(Unit.."target", "player") then
+						if UnitIsUnit(Unit.."target", "player") and not frame.source[UnitGUID(Unit)] then
 							local endTimeMS = select(6, UnitCastingInfo(Unit))
-							if endTimeMS then
-								frame.exp = endTimeMS/1000
-								frame.source = UnitGUID(Unit)
-								frame:Show()
+							frame.exp = endTimeMS/1000
+							frame.source[UnitGUID(Unit)] = true
+							frame.count = frame.count + 1
+							if frame.count > 1 then
+								frame.toptext:SetText(frame.count)
+							else
+								frame.toptext:SetText("")
 							end
+							frame:Show()
 						end
 					end)
 				elseif e == "UNIT_SPELLCAST_CHANNEL_STOP" or e == "UNIT_SPELLCAST_STOP" then
-					if frame.source and UnitGUID(Unit) == frame.source then
-						frame.reset()
+					if frame.source[UnitGUID(Unit)] then
+						frame.source[UnitGUID(Unit)] = nil
+						frame.count = frame.count - 1
+						if frame.count > 1 then
+							frame.toptext:SetText(frame.count)
+						elseif frame.count == 1 then
+							frame.toptext:SetText("")
+						else
+							frame.reset()
+						end
 					end
 				end
 			end
