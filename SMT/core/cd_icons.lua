@@ -614,18 +614,20 @@ Group_Update:SetScript("OnEvent", function(self, event, ...)
 		
 		if not sourceName or not spellID then return end
 		local name = string.split("-", sourceName)
-		if event_type == "SPELL_CAST_SUCCESS" and party_cd['Roster'][name] and party_cd['Roster'][name][spellID] then
-			party_cd['Roster'][name][spellID]["start"] = GetTime()
-			UpdateCD(name, spellID)
+		if event_type == "SPELL_CAST_SUCCESS" and party_cd['Roster'][name] then
+			if party_cd['Roster'][name][spellID] then
+				party_cd['Roster'][name][spellID]["start"] = GetTime()
+				UpdateCD(name, spellID)
+			end
 			if spellID == 235219 then -- 急速冷却
 				party_cd['Roster'][name][45438]["start"] = 0 -- 寒冰屏障
 				UpdateCD(name, 45438)
-			end
-		elseif event_type == "SPELL_AURA_APPLIED" and party_cd['Roster'][name] and spellID == 162264 then -- 恶魔变形
-			local info = LGIST:GetCachedInfo (sourceGUID)
-			if info.talents[22767] then -- 恶魔重生
-				party_cd['Roster'][name][198589]["start"] = 0 -- 疾影
-				UpdateCD(name, 198589)
+			elseif spellID == 191427 then -- 恶魔变形
+				local info = LGIST:GetCachedInfo (sourceGUID)
+				if info.talents[22767] then -- 恶魔重生
+					party_cd['Roster'][name][198589]["start"] = 0 -- 疾影
+					UpdateCD(name, 198589)
+				end
 			end
 		end
 		
