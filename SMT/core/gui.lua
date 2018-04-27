@@ -908,6 +908,7 @@ options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
 ----------------------------------------------------------
 
 SLASH_SMT1 = "/smt"
+SLASH_SMT2 = "/skyline"
 SlashCmdList["SMT"] = function(arg)
 	if gui:IsShown() then
 		gui:Hide()
