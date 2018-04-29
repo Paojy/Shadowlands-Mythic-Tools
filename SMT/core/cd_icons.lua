@@ -310,7 +310,7 @@ local function CreateCDBar(unit)
 		elseif hasoUF then
 			for i=1, 8 do
 				for j=1, 5 do
-					local uf = _G["ElvUF_RaidGroup"..i.."UnitButton"..j]
+					local uf = _G["oUF_Raid"..i.."UnitButton"..j]
 					if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
 						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
 							f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
