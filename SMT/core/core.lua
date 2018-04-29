@@ -1685,7 +1685,8 @@ T.HL_OnRaid = function(v, t, target, sourceGUID)
     local hasVuhDo = IsAddOnLoaded("VuhDo")
     local hasElvUI = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
     local hasAltzUI = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
-    
+    local hasNDui = IsAddOnLoaded("NDui")
+	
     if hasElvUI then
         for i=1, 8 do
             for j=1, 5 do
@@ -1744,6 +1745,16 @@ T.HL_OnRaid = function(v, t, target, sourceGUID)
             if f and f.unit and UnitName(f.unit) == target then
                 add_Icon(f, v, t, target, sourceGUID)
                 return
+            end
+        end
+	elseif hasNDui then
+		for i =1, 8 do 
+            for j = 1, 5 do
+                local f = _G["oUF_Raid"..i.."UnitButton"..j]
+                if f and f.unit and UnitName(f.unit) == target then
+                    add_Icon(f, v, t, target, sourceGUID)
+                    return
+                end
             end
         end
     elseif hasCompactRaid then
