@@ -187,6 +187,7 @@ local function CreateCDBar(unit)
 		local hasVuhDo = IsAddOnLoaded("VuhDo")
 		local hasElvUI = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
 		local hasAltzUI = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
+		local hasoUF = _G["oUF"] or IsAddOnLoaded("NDui")
 		
 		if hasElvUI then
 			for i=1, 8 do
@@ -295,6 +296,24 @@ local function CreateCDBar(unit)
 					if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
 						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
 						f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
+							f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
+							f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
+							f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+						end
+						break
+					end
+				end
+			end
+		elseif hasoUF then
+			for i=1, 8 do
+				for j=1, 5 do
+					local uf = _G["ElvUF_RaidGroup"..i.."UnitButton"..j]
+					if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
+						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
+							f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
 						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
 							f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
 						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
