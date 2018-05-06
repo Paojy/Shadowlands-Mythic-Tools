@@ -12,7 +12,6 @@
 	<Script file="core\core.lua"/>
 	<Script file="core\cd_icons.lua"/>
 	
-	<Script file="npc.lua"/>
 	<!--<Script file="test.lua"/>-->
 	<Script file="data.lua"/>
 </Ui>

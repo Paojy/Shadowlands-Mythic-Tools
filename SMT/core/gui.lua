@@ -554,6 +554,19 @@ T.Create_ChatMsg_Options = function(parent, v, t)
 	table.insert(parent.options, bu)
 end
 
+
+local scanTooltip = CreateFrame("GameTooltip", "NPCNameToolTip", nil, "GameTooltipTemplate") --fake tooltipframe used for reading localized npc names -- by lunaic
+
+local function GetNameFromNpcID(npcID)
+	scanTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+	scanTooltip:SetHyperlink(format("unit:Creature-0-0-0-0-%d-0000000000", npcID))
+	if scanTooltip:NumLines()>0 then
+		local name = NPCNameToolTipTextLeft1:GetText()
+		scanTooltip:Hide()
+		return name
+	end
+end
+
 T.CreateMobOptions = function(parent, id, options, image_id)
 	local mf = CreateFrame("Frame", nil, parent.sfa)
 	T.createborder(mf)
@@ -576,7 +589,7 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 	
 	mf:SetSize(510,	mf.collapse)
 	
-	mf.title = T.createUIPanelButton(mf, nil, 510, mf.collapse, L.Npc[id])	
+	mf.title = T.createUIPanelButton(mf, nil, 510, mf.collapse, GetNameFromNpcID(id))	
 	mf.title:SetPoint("TOP")
 	mf.title:SetScript("OnMouseDown", function()
 		if mf.expand then
