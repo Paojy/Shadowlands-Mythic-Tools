@@ -2004,8 +2004,9 @@ local function UpdateSpellIcon(event, event_SpellID, button, unit, spellID, cd)
 			if cd == 1 then button:Show() end
 		end
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-		if event_SpellID == spellID and cd > 1 then	
-			button.cd:SetCooldown(GetTime(), cd)
+		if event_SpellID == spellID and cd > 1 then
+			local realcd = cd - select(4, GetSpellInfo(spellID))*(100+GetHaste())/1e5
+			button.cd:SetCooldown(GetTime(), realcd)
 		end
 	elseif not (UnitCastingInfo(unit) or UnitChannelInfo(unit)) then
 		button.cast:Hide()
