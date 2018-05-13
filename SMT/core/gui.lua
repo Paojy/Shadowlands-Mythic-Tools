@@ -829,18 +829,18 @@ local anchors = {
 options.HL_Frame_position = createradiobuttongroup(options.sfa, 40, -430, L["锚点"], "HL_Frame", false, "position", anchors)
 options.HL_Frame_position.apply = function() T.EditHL() end
 
-T.CreateTitle(options.sfa, L["姓名板图标"], -480)
+T.CreateTitle(options.sfa, L["姓名板图标"], -470)
 
-options.PlateAlerts_enable = createcheckbutton(options.sfa, 40, -510, L["启用"], "PlateAlerts", false, "enable")
+options.PlateAlerts_enable = createcheckbutton(options.sfa, 40, -490, L["启用"], "PlateAlerts", false, "enable")
 options.PlateAlerts_enable.apply = function() T.EditPlateIcons("enable") end
 
-options.PlateAlerts_size = createslider(options.sfa, 60, -550, L["图标大小"], "PlateAlerts", false, "size", 20, 50, 1)
+options.PlateAlerts_size = createslider(options.sfa, 60, -530, L["图标大小"], "PlateAlerts", false, "size", 20, 50, 1)
 options.PlateAlerts_size.apply = function() T.EditPlateIcons("icon_size") end
 
-options.PlateAlerts_fsize = createslider(options.sfa, 220, -550, L["字体大小"], "PlateAlerts", false, "fsize", 6, 16, 1)
+options.PlateAlerts_fsize = createslider(options.sfa, 300, -530, L["字体大小"], "PlateAlerts", false, "fsize", 6, 16, 1)
 options.PlateAlerts_fsize.apply = function() T.EditPlateIcons("font_size") end
 
-options.PlateAlerts_y = createslider(options.sfa, 380, -550, L["垂直距离"], "PlateAlerts", false, "y", -50, 50, 1)
+options.PlateAlerts_y = createslider(options.sfa, 60, -570, L["垂直距离"], "PlateAlerts", false, "y", -50, 50, 1)
 options.PlateAlerts_y.apply = function() T.EditPlateIcons("y") end
 
 local function CreateAffixNPOptions(v, affix_id, x, y)
@@ -864,12 +864,12 @@ local function CreateAffixNPOptions(v, affix_id, x, y)
 	options[v] = bu
 end
 
-CreateAffixNPOptions("Explosive_np", 13, 40, -580)
-CreateAffixNPOptions("Bolster_np", 7, 240, -580)
-CreateAffixNPOptions("Sanguine_np", 8, 40, -610)
-CreateAffixNPOptions("Raging_np", 6, 240, -610)
+CreateAffixNPOptions("Explosive_np", 13, 40, -590)
+CreateAffixNPOptions("Bolster_np", 7, 240, -590)
+CreateAffixNPOptions("Sanguine_np", 8, 40, -620)
+CreateAffixNPOptions("Raging_np", 6, 240, -620)
 
-T.CreateTitle(options.sfa, L["文字提示"], -640)
+T.CreateTitle(options.sfa, L["文字提示"], -650)
 
 options.TextFrame_font_size = createslider(options.sfa, 60, -690, L["字体大小"], "TextFrame", false, "font_size", 20, 80, 1)
 options.TextFrame_font_size.apply = function() T.EditTextFrame("font_size") end
@@ -903,19 +903,19 @@ options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
 options.CD_Icons_size = createslider(options.sfa, 60, -850, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
 options.CD_Icons_size.apply = function() T.EditCDBar("size") end
 
-options.CD_Icons_space = createslider(options.sfa, 220, -850, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
+options.CD_Icons_space = createslider(options.sfa, 300, -850, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
 options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_num = createslider(options.sfa, 380, -850, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
+options.CD_Icons_num = createslider(options.sfa, 60, -900, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
 options.CD_Icons_num.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_x = createslider(options.sfa, 60, -890, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
+options.CD_Icons_x = createslider(options.sfa, 300, -900, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
 options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_y = createslider(options.sfa, 220, -890, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
+options.CD_Icons_y = createslider(options.sfa, 60, -950, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
 options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_alpha = createslider(options.sfa, 380, -890, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
+options.CD_Icons_alpha = createslider(options.sfa, 300, -950, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
 options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
 
 ----------------------------------------------------------
