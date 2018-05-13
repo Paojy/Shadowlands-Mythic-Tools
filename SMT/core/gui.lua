@@ -276,6 +276,8 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 	for i = 1, #buttons do
 		if i == 1 then
 			buttons[i]:SetPoint("LEFT", frame.text, "RIGHT", 10, 0)
+		elseif i==6 then
+			buttons[i]:SetPoint("LEFT", frame.text, "RIGHT", 10, -20)
 		else
 			buttons[i]:SetPoint("LEFT", _G[buttons[i-1]:GetName() .. "Text"], "RIGHT", 5, 0)
 		end
@@ -824,7 +826,7 @@ local anchors = {
 	{"BOTTOMRIGHT",	 L["右下"]},
 }
 
-options.HL_Frame_position = createradiobuttongroup(options.sfa, 40, -450, L["锚点"], "HL_Frame", false, "position", anchors)
+options.HL_Frame_position = createradiobuttongroup(options.sfa, 40, -430, L["锚点"], "HL_Frame", false, "position", anchors)
 options.HL_Frame_position.apply = function() T.EditHL() end
 
 T.CreateTitle(options.sfa, L["姓名板图标"], -480)
@@ -895,25 +897,25 @@ options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
 options.CD_Icons_grow_dir = createradiobuttongroup(options.sfa, 150, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
 options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_hideinraid = createcheckbutton(options.sfa, 380, -780, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
+options.CD_Icons_hideinraid = createcheckbutton(options.sfa, 40, -810, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
 options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
 
-options.CD_Icons_size = createslider(options.sfa, 60, -820, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
+options.CD_Icons_size = createslider(options.sfa, 60, -850, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
 options.CD_Icons_size.apply = function() T.EditCDBar("size") end
 
-options.CD_Icons_space = createslider(options.sfa, 220, -820, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
+options.CD_Icons_space = createslider(options.sfa, 220, -850, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
 options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_num = createslider(options.sfa, 380, -820, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
+options.CD_Icons_num = createslider(options.sfa, 380, -850, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
 options.CD_Icons_num.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_x = createslider(options.sfa, 60, -860, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
+options.CD_Icons_x = createslider(options.sfa, 60, -890, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
 options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_y = createslider(options.sfa, 220, -860, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
+options.CD_Icons_y = createslider(options.sfa, 220, -890, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
 options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_alpha = createslider(options.sfa, 380, -860, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
+options.CD_Icons_alpha = createslider(options.sfa, 380, -890, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
 options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
 
 ----------------------------------------------------------
