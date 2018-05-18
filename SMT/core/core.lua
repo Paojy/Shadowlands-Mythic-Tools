@@ -1,4 +1,4 @@
-﻿local T, C, L, G = unpack(select(2, ...))
+local T, C, L, G = unpack(select(2, ...))
 
 local addon_name = G.addon_name
 local font = G.Font
@@ -1683,14 +1683,25 @@ T.HL_OnRaid = function(v, t, target, sourceGUID)
     local hasGrid2 = IsAddOnLoaded("Grid2")
     local hasCompactRaid = IsAddOnLoaded("CompactRaid")
     local hasVuhDo = IsAddOnLoaded("VuhDo")
-    local hasElvUI = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
+	local hasElvUI  = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible() or IsAddOnLoaded("ElvUI")
+	local hasElvUI2 = _G["ElvUF_Party"] and _G["ElvUF_Party"]:IsVisible() or IsAddOnLoaded("ElvUI")
     local hasAltzUI = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
     local hasNDui = IsAddOnLoaded("NDui")
 	
-    if hasElvUI then
+	if hasElvUI then
         for i=1, 8 do
             for j=1, 5 do
                 local f = _G["ElvUF_RaidGroup"..i.."UnitButton"..j]
+                if f and f.unit and UnitName(f.unit) == target then
+                    add_Icon(f, v, t, target, sourceGUID)
+                    return
+                end
+            end
+		end  
+	elseif hasElvUI2 then
+        for i=1, 8 do
+            for j=1, 5 do
+                local f = _G["ElvUF_PartyGroup"..i.."UnitButton"..j]
                 if f and f.unit and UnitName(f.unit) == target then
                     add_Icon(f, v, t, target, sourceGUID)
                     return
