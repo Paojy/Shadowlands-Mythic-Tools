@@ -28,7 +28,7 @@ G.media = {
 	sounds = "Interface\\AddOns\\SMT\\media\\sounds\\",
 	arrowUp = "Interface\\AddOns\\SMT\\media\\up",
 	arrowDown = "Interface\\AddOns\\SMT\\media\\down",
-	gradient = "Interface\\AddOns\\Aurora\\media\\gradient",
+	gradient = "Interface\\AddOns\\SMT\\media\\gradient",
 }
 
 G.Client = GetLocale()
@@ -45,15 +45,6 @@ end
 
 StaticPopupDialogs[G.addon_name.."Reset Confirm"] = {
 	text = "",
-	button1 = ACCEPT,
-	button2 = CANCEL,
-	hideOnEscape = 1, 
-	whileDead = true,
-	preferredIndex = 3,
-}
-
-StaticPopupDialogs[G.addon_name.."Import Confirm"] = {
-	text = L["导入确认"],
 	button1 = ACCEPT,
 	button2 = CANCEL,
 	hideOnEscape = 1, 

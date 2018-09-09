@@ -57,8 +57,10 @@ local DefensiveSpells = {
 	},
 	
 	["DEMONHUNTER"] = {
-		["196555"] = {spellID = 196555, cd = 120, spec = 577, talent = 21863}, -- 虚空行走 浩劫
+		["196555"] = {spellID = 196555, cd = 120, spec = 577, talent = 21865}, -- 虚空行走 浩劫
 		["198589"] = {spellID = 198589, cd = 60, spec = 577, talent = "all"}, -- 疾影 浩劫
+		["191427"] = {spellID = 191427, cd = 240, spec = 577, talent = "all"}, -- 恶魔变形 浩劫
+		["187827"] = {spellID = 187827, cd = 180, spec = 581, talent = "all"}, -- 恶魔变形 复仇
 	},
 	
 	["HUNTER"] = {
@@ -67,6 +69,9 @@ local DefensiveSpells = {
 	
 	["ROGUE"] = {
 		["31224"] = {spellID = 31224, cd = 90, spec = "all", talent = "all"}, -- 暗影斗篷
+		["199754"] = {spellID = 199754, cd = 120, spec = 260, talent = "all"}, -- 还击 狂徒
+		["5277_1"] = {spellID = 5277, cd = 120, spec = 259, talent = "all"}, -- 闪避 奇袭
+		["5277_2"] = {spellID = 5277, cd = 120, spec = 261, talent = "all"}, -- 闪避 敏锐
 	},
 	
 	["SHAMAN"] = {
@@ -83,6 +88,9 @@ local DefensiveSpells = {
 	},
 	
 	["PRIEST"] = {
+		["19236_1"] = {spellID = 19236, cd = 90, spec = 257, talent = "all"}, -- 绝望祷言 神圣
+		["19236_2"] = {spellID = 19236, cd = 90, spec = 256, talent = "all"}, -- 绝望祷言 戒律
+		["33206"] = {spellID = 33206, cd = 180, spec = 256, talent = "all"}, -- 痛苦压制
 		["47585"] = {spellID = 47585, cd = 80, spec = 258, talent = "all"}, -- 消散
 	},
 	
@@ -191,7 +199,7 @@ local function CreateCDBar(unit)
 			local hasVuhDo = IsAddOnLoaded("VuhDo")
 			local hasElvUI = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
 			local hasAltzUI = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
-			local hasNDui = IsAddOnLoaded("NDui")
+			local hasNDui = IsAddOnLoaded("NDui") and NDuiDB["UFs"]["RaidFrame"]
 			
 			if hasElvUI then
 				for i=1, 8 do
@@ -332,6 +340,21 @@ local function CreateCDBar(unit)
 			else
 				for i=1, 40 do
 					local uf = _G["CompactRaidFrame"..i]
+					if uf and uf.unitExists and uf.unit and UnitIsUnit(uf.unit, unit) then
+						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
+						f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
+							f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
+							f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
+							f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+						end
+						break
+					end
+				end
+				for i=1, 5 do
+					local uf = _G["CompactPartyFrameMember"..i]
 					if uf and uf.unitExists and uf.unit and UnitIsUnit(uf.unit, unit) then
 						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
 						f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
@@ -623,7 +646,7 @@ Group_Update:SetScript("OnEvent", function(self, event, ...)
 		UpdateCDBar("all")
 		
 		Group_Update:UnregisterEvent("PLAYER_ENTERING_WORLD")
-		Group_Update:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+		Group_Update:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 		Group_Update:RegisterEvent("ENCOUNTER_END")
 		Group_Update:RegisterEvent("GROUP_ROSTER_UPDATE")
 		
@@ -636,13 +659,12 @@ Group_Update:SetScript("OnEvent", function(self, event, ...)
 		T.EditCDBar("show")
 		UpdateCDBar("all")
 		
-	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-	
-		local _, event_type, _, sourceGUID, sourceName, _, _, _, _, _, _, spellID = ...
+	elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+		local Unit, _, spellID = ...
+		local name = UnitName(Unit)
 		
-		if not sourceName or not spellID then return end
-		local name = string.split("-", sourceName)
-		if event_type == "SPELL_CAST_SUCCESS" and party_cd['Roster'][name] then
+		if not name or not spellID then return end
+		if party_cd['Roster'][name] then
 			if party_cd['Roster'][name][spellID] then
 				party_cd['Roster'][name][spellID]["start"] = GetTime()
 				UpdateCD(name, spellID)

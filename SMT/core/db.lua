@@ -54,7 +54,7 @@ local Character_default_Settings = {
 		hide_in_raid = true,
 		x = 5,
 		y = 0,
-		alpha = .2,
+		alpha = 20,
 	},
 	
 	Icons = {

@@ -249,9 +249,9 @@ T.CreateAura = function(option_page, v, aura_type, unit, arg_index)
 		
 			frame.enable = SMT_CDB["Icons"][v] and SMT_CDB["AlertFrame"]["enable"]
 			if frame.enable then		
-				frame:RegisterEvent("WORLD_MAP_UPDATE")			
+				frame:RegisterEvent("PLAYER_ENTERING_WORLD")			
 			else
-				frame:UnregisterEvent("WORLD_MAP_UPDATE")	
+				frame:UnregisterEvent("PLAYER_ENTERING_WORLD")	
 			end
 			
 			frame.update_onevent("INIT")
@@ -277,8 +277,8 @@ T.CreateAura = function(option_page, v, aura_type, unit, arg_index)
 	end
 	
 	frame.Update = function()
-		if frame.enable and UnitAura(unit, frame.spell_name, nil, aura_type) then 
-			frame.dur, frame.exp = select(6, UnitAura(unit, frame.spell_name, nil, aura_type))
+		if frame.enable and AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type) then 
+			frame.dur, frame.exp = select(5, AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type))
 			frame:Show()
 		else
 			frame.reset()
@@ -286,7 +286,7 @@ T.CreateAura = function(option_page, v, aura_type, unit, arg_index)
 	end
 	
 	frame.map_check = function()
-		local map = GetCurrentMapAreaID()
+		local map = select(8, GetInstanceInfo())
 		if frame.enable and map == frame.map_id then
 			frame:RegisterEvent("UNIT_AURA")
 		else
@@ -299,7 +299,7 @@ T.CreateAura = function(option_page, v, aura_type, unit, arg_index)
 		if event == "INIT" then
 			frame.map_check()
 			frame.Update()
-		elseif event == "WORLD_MAP_UPDATE" then
+		elseif event == "PLAYER_ENTERING_WORLD" then
 			frame.map_check()
 		elseif event == "UNIT_AURA" then
 			local u = ...
@@ -314,12 +314,12 @@ T.CreateAura = function(option_page, v, aura_type, unit, arg_index)
 			local count, time = "",""
 			
 			if arg_index then
-				frame.count = T.ShortValue(select(arg_index, UnitAura(unit, frame.spell_name, nil, aura_type)))
+				frame.count = T.ShortValue(select(arg_index, AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type)))
 				if frame.count then
 					count = "["..frame.count.."] "
 				end
 			else
-				frame.count = select(4, UnitAura(unit, frame.spell_name, nil, aura_type))
+				frame.count = select(3, AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type))
 				if frame.count and frame.count > 0 then
 					count = "["..T.ShortValue(frame.count).."] "
 				end						
@@ -407,8 +407,8 @@ T.CreateAffixAura = function(option_page, v, affix_id, x, y)
 	end
 	
 	frame.Update = function()
-		if frame.enable and UnitAura(unit, frame.spell_name, nil, aura_type) then 
-			frame.dur, frame.exp = select(6, UnitAura(unit, frame.spell_name, nil, aura_type))
+		if frame.enable and AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type) then 
+			frame.dur, frame.exp = select(5, AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type))
 			frame:Show()
 		else
 			frame.reset()
@@ -442,12 +442,12 @@ T.CreateAffixAura = function(option_page, v, affix_id, x, y)
 			local count, time = "",""
 			
 			if arg_index then
-				frame.count = select(arg_index, UnitAura(unit, frame.spell_name, nil, aura_type))
+				frame.count = select(arg_index, AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type))
 				if frame.count then
 					count = "["..frame.count.."] "
 				end
 			else
-				frame.count = select(4, UnitAura(unit, frame.spell_name, nil, aura_type))
+				frame.count = select(3, AuraUtil.FindAuraByName(frame.spell_name, unit, aura_type))
 				if frame.count > 0 then
 					count = "["..T.ShortValue(frame.count).."] "
 				end						
@@ -507,9 +507,9 @@ T.CreateAuras = function(option_page, v, aura_type, arg_index)
 		
 			frame.enable = SMT_CDB["Icons"][v] and SMT_CDB["AlertFrame"]["enable"]
 			if frame.enable then		
-				frame:RegisterEvent("WORLD_MAP_UPDATE")				
+				frame:RegisterEvent("PLAYER_ENTERING_WORLD")				
 			else
-				frame:UnregisterEvent("WORLD_MAP_UPDATE")	
+				frame:UnregisterEvent("PLAYER_ENTERING_WORLD")	
 			end
 			
 			frame.update_onevent("INIT")		
@@ -535,7 +535,7 @@ T.CreateAuras = function(option_page, v, aura_type, arg_index)
 	end
 	
 	frame.map_check = function()
-		local map = GetCurrentMapAreaID()
+		local map = select(8, GetInstanceInfo())
 		if frame.enable and map == frame.map_id then
 			frame:RegisterEvent("UNIT_AURA")
 		else
@@ -548,17 +548,17 @@ T.CreateAuras = function(option_page, v, aura_type, arg_index)
 	frame.update_onevent = function(event, ...)
 		if event == "INIT" then
 			frame.map_check()
-		elseif event == "WORLD_MAP_UPDATE" then
+		elseif event == "PLAYER_ENTERING_WORLD" then
 			frame.map_check()
 		elseif event == "UNIT_AURA" then
 			if frame.enable then
 				local unitID = ...
 				if unitID and UnitInParty(unitID) then	
 					local player = UnitName(unitID)
-					if UnitAura(unitID, frame.spell_name, nil, aura_type) then
+					if AuraUtil.FindAuraByName(frame.spell_name, unitID, aura_type) then
 						if not frame.players[player] then
 							frame.players[player] = {}
-							frame.players[player].dur, frame.players[player].exp = select(6, UnitAura(unitID, frame.spell_name, nil, aura_type))
+							frame.players[player].dur, frame.players[player].exp = select(5, AuraUtil.FindAuraByName(frame.spell_name, unitID, aura_type))
 							frame.num = frame.num + 1
 						end					
 					else
@@ -594,12 +594,12 @@ T.CreateAuras = function(option_page, v, aura_type, arg_index)
 					local count, time = "", ""
 					
 					if arg_index then
-						frame.players[player].count = T.ShortValue(select(arg_index, UnitAura(player, frame.spell_name, nil, aura_type)))
+						frame.players[player].count = T.ShortValue(select(arg_index, AuraUtil.FindAuraByName(frame.spell_name, player, aura_type)))
 						if frame.players[player].count then
 							count = "["..frame.players[player].count.."] "
 						end
 					else
-						frame.players[player].count = select(4, UnitAura(player, frame.spell_name, nil, aura_type))
+						frame.players[player].count = select(3, AuraUtil.FindAuraByName(frame.spell_name, player, aura_type))
 						if frame.players[player].count > 0 then
 							count = "["..T.ShortValue(frame.players[player].count).."] "
 						end						
@@ -666,9 +666,9 @@ T.CreateLog = function(option_page, v, event_type, targetID, dur)
 		
 			frame.enable = SMT_CDB["Icons"][v] and SMT_CDB["AlertFrame"]["enable"]
 			if frame.enable then		
-				frame:RegisterEvent("WORLD_MAP_UPDATE")				
+				frame:RegisterEvent("PLAYER_ENTERING_WORLD")				
 			else
-				frame:UnregisterEvent("WORLD_MAP_UPDATE")
+				frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
 			end			
 			
 			frame.update_onevent("INIT")
@@ -694,7 +694,7 @@ T.CreateLog = function(option_page, v, event_type, targetID, dur)
 	end
 	
 	frame.map_check = function()
-		local map = GetCurrentMapAreaID()
+		local map = select(8, GetInstanceInfo())
 		if frame.enable and map == frame.map_id then
 			frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 		else
@@ -706,11 +706,11 @@ T.CreateLog = function(option_page, v, event_type, targetID, dur)
 	frame.update_onevent = function(event, ...)
 		if event == "INIT" then
 			frame.map_check()
-		elseif event == "WORLD_MAP_UPDATE" then
+		elseif event == "PLAYER_ENTERING_WORLD" then
 			frame.map_check()
 		elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 			if frame.enable then
-				local Time_stamp, Event_type, _, SourceGUID, SourceName, _, _, DestGUID, DestName, _, _, SpellID, SpellName = ...
+				local Time_stamp, Event_type, _, SourceGUID, SourceName, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()
 				if Event_type == event_type and SpellID == frame.spell_id then
 					if not targetID then
 						frame.exp = GetTime() + frame.dur
@@ -795,13 +795,15 @@ T.CreateCast = function(option_page, v)
 		frame.count = 0
 	end
 	
+	frame.reset()
+	
 	frame.update_onedit = function(option)
 		if option == "all" or option == "enable" then	
 			frame.enable = SMT_CDB["Icons"][v] and SMT_CDB["AlertFrame"]["enable"]
 			if frame.enable then		
-				frame:RegisterEvent("WORLD_MAP_UPDATE")				
+				frame:RegisterEvent("PLAYER_ENTERING_WORLD")				
 			else
-				frame:UnregisterEvent("WORLD_MAP_UPDATE")	
+				frame:UnregisterEvent("PLAYER_ENTERING_WORLD")	
 			end
 			
 			frame.update_onevent("INIT")
@@ -827,7 +829,7 @@ T.CreateCast = function(option_page, v)
 	end
 	
 	frame.map_check = function()
-		local map = GetCurrentMapAreaID()
+		local map = select(8, GetInstanceInfo())
 		if frame.enable and map == frame.map_id then
 			for k, j in pairs(CastingEvents) do
 				frame:RegisterEvent(k)
@@ -841,14 +843,14 @@ T.CreateCast = function(option_page, v)
 	end
 	
 	frame.update_onevent = function(e, ...)
-		if e == "INIT" or e == "WORLD_MAP_UPDATE" then
+		if e == "INIT" or e == "PLAYER_ENTERING_WORLD" then
 			frame.map_check()
 		elseif frame.enable then	
-			local Unit, Spell, _, _, SpellID = ...
+			local Unit, _, SpellID = ...
 			if SpellID == frame.spell_id then
 				if e == "UNIT_SPELLCAST_CHANNEL_START" then -- 开始引导
 					if not frame.source[UnitGUID(Unit)] then
-						local endTimeMS = select(6, UnitChannelInfo(Unit))
+						local endTimeMS = select(5, UnitChannelInfo(Unit))
 						frame.exp = endTimeMS/1000
 						frame.source[UnitGUID(Unit)] = true
 						frame.count = frame.count + 1
@@ -861,7 +863,7 @@ T.CreateCast = function(option_page, v)
 					end
 				elseif e == "UNIT_SPELLCAST_START" then -- 开始施法
 					if not frame.source[UnitGUID(Unit)] then
-						local endTimeMS = select(6, UnitCastingInfo(Unit))
+						local endTimeMS = select(5, UnitCastingInfo(Unit))
 						frame.exp = endTimeMS/1000
 						frame.source[UnitGUID(Unit)] = true
 						frame.count = frame.count + 1
@@ -884,12 +886,16 @@ T.CreateCast = function(option_page, v)
 								frame.toptext:SetText("")
 							end
 							C_Timer.After(2, function()
+								if UnitGUID(Unit) then
 								frame.count = frame.count - 1
-								frame.source[UnitGUID(Unit)] = nil
-								if frame.count > 1 then
-									frame.toptext:SetText(frame.count)
-								elseif frame.count == 1 then
-									frame.toptext:SetText("")
+									frame.source[UnitGUID(Unit)] = nil
+									if frame.count > 1 then
+										frame.toptext:SetText(frame.count)
+									elseif frame.count == 1 then
+										frame.toptext:SetText("")
+									else
+										frame.reset()
+									end
 								else
 									frame.reset()
 								end
@@ -961,13 +967,15 @@ T.CreateCastingOnMe = function(option_page, v)
 		frame.count = 0
 	end
 	
+	frame.reset()
+	
 	frame.update_onedit = function(option)
 		if option == "all" or option == "enable" then	
 			frame.enable = SMT_CDB["Icons"][v] and SMT_CDB["AlertFrame"]["enable"]
 			if frame.enable then		
-				frame:RegisterEvent("WORLD_MAP_UPDATE")				
+				frame:RegisterEvent("PLAYER_ENTERING_WORLD")				
 			else
-				frame:UnregisterEvent("WORLD_MAP_UPDATE")	
+				frame:UnregisterEvent("PLAYER_ENTERING_WORLD")	
 			end
 			
 			frame.update_onevent("INIT")
@@ -993,7 +1001,7 @@ T.CreateCastingOnMe = function(option_page, v)
 	end
 	
 	frame.map_check = function()
-		local map = GetCurrentMapAreaID()
+		local map = select(8, GetInstanceInfo())
 		if frame.enable and map == frame.map_id then
 			for k, j in pairs(CastingEvents) do
 				frame:RegisterEvent(k)
@@ -1007,39 +1015,43 @@ T.CreateCastingOnMe = function(option_page, v)
 	end
 	
 	frame.update_onevent = function(e, ...)
-		if e == "INIT" or e == "WORLD_MAP_UPDATE" then
+		if e == "INIT" or e == "PLAYER_ENTERING_WORLD" then
 			frame.map_check()
 		elseif frame.enable then
-			local Unit, Spell, _, _, SpellID = ...
+			local Unit, _, SpellID = ...
 			if SpellID == frame.spell_id then
 				if e == "UNIT_SPELLCAST_CHANNEL_START" then -- 开始引导
 					C_Timer.After(.1, function()
 						if UnitIsUnit(Unit.."target", "player") and not frame.source[UnitGUID(Unit)] then
-							local endTimeMS = select(6, UnitChannelInfo(Unit))
-							frame.exp = endTimeMS/1000
-							frame.source[UnitGUID(Unit)] = true
-							frame.count = frame.count + 1
-							if frame.count > 1 then
-								frame.toptext:SetText(frame.count)
-							else
-								frame.toptext:SetText("")
+							local endTimeMS = select(5, UnitChannelInfo(Unit))
+							if endTimeMS then
+								frame.exp = endTimeMS/1000
+								frame.source[UnitGUID(Unit)] = true
+								frame.count = frame.count + 1
+								if frame.count > 1 then
+									frame.toptext:SetText(frame.count)
+								else
+									frame.toptext:SetText("")
+								end
+								frame:Show()
 							end
-							frame:Show()
 						end
 					end)
 				elseif e == "UNIT_SPELLCAST_START" then -- 开始施法
 					C_Timer.After(.1, function()
 						if UnitIsUnit(Unit.."target", "player") and not frame.source[UnitGUID(Unit)] then
-							local endTimeMS = select(6, UnitCastingInfo(Unit))
-							frame.exp = endTimeMS/1000
-							frame.source[UnitGUID(Unit)] = true
-							frame.count = frame.count + 1
-							if frame.count > 1 then
-								frame.toptext:SetText(frame.count)
-							else
-								frame.toptext:SetText("")
+							local endTimeMS = select(5, UnitCastingInfo(Unit))
+							if endTimeMS then
+								frame.exp = endTimeMS/1000
+								frame.source[UnitGUID(Unit)] = true
+								frame.count = frame.count + 1
+								if frame.count > 1 then
+									frame.toptext:SetText(frame.count)
+								else
+									frame.toptext:SetText("")
+								end
+								frame:Show()
 							end
-							frame:Show()
 						end
 					end)
 				elseif e == "UNIT_SPELLCAST_CHANNEL_STOP" or e == "UNIT_SPELLCAST_STOP" then
@@ -1113,9 +1125,9 @@ T.CreateBossMsg = function(option_page, v, event, msg, dur)
 		if option == "all" or option == "enable" then	
 			frame.enable = SMT_CDB["Icons"][v] and SMT_CDB["AlertFrame"]["enable"]
 			if frame.enable then		
-				frame:RegisterEvent("WORLD_MAP_UPDATE")				
+				frame:RegisterEvent("PLAYER_ENTERING_WORLD")				
 			else
-				frame:UnregisterEvent("WORLD_MAP_UPDATE")		
+				frame:UnregisterEvent("PLAYER_ENTERING_WORLD")		
 			end			
 			
 			frame.update_onevent("INIT")
@@ -1141,7 +1153,7 @@ T.CreateBossMsg = function(option_page, v, event, msg, dur)
 	end
 	
 	frame.map_check = function()
-		local map = GetCurrentMapAreaID()
+		local map = select(8, GetInstanceInfo())
 		if frame.enable and map == frame.map_id then
 			frame:RegisterEvent(event)
 		else
@@ -1153,7 +1165,7 @@ T.CreateBossMsg = function(option_page, v, event, msg, dur)
 	frame.update_onevent = function(e, ...)
 		if e == "INIT" then
 			frame.map_check()
-		elseif e == "WORLD_MAP_UPDATE" then
+		elseif e == "PLAYER_ENTERING_WORLD" then
 			frame.map_check()
 		elseif e == event then
 			local Msg = ...
@@ -1294,8 +1306,8 @@ T.CreateBigText = function(v, r, g, b, events)
 			else
 				for i, j in pairs(events) do
 					frame:UnregisterEvent(j)
-					frame:Hide()
 				end
+				frame:Hide()
 			end
 		elseif event == "PLAYER_ENTERING_WORLD" then
 			local ins_size = select(5, GetInstanceInfo())
@@ -1306,8 +1318,8 @@ T.CreateBigText = function(v, r, g, b, events)
 			else
 				for i, j in pairs(events) do
 					frame:UnregisterEvent(j)
-					frame:Hide()
 				end
+				frame:Hide()
 			end
 		else
 			frame.update_onevent(self, event, ...)
@@ -1391,8 +1403,8 @@ end
 
 text_quaking.update_onevent = function(self, event, unit)
     if event == "UNIT_AURA" and unit == "player" then
-		if self.enable and UnitDebuff("player", GetSpellInfo(240447)) then 
-			self.count, _, self.dur, self.exp = select(4, UnitDebuff("player", GetSpellInfo(240447)))			
+		if self.enable and AuraUtil.FindAuraByName(GetSpellInfo(240447), "player", "HARMFUL") then 
+			self.count, _, self.dur, self.exp = select(3, AuraUtil.FindAuraByName(GetSpellInfo(240447), "player", "HARMFUL"))			
 			self:Show()
 		else
 			self.reset()
@@ -1407,7 +1419,7 @@ text_quaking.update_onframe = function(self)
 		local time_t = T.FormatTime(remain)
 		local icon = "|T136025:12:12:0:0:64:64:4:60:4:60|t"
 		
-		local cast_end= select(6, UnitCastingInfo("player"))
+		local cast_end= select(5, UnitCastingInfo("player"))
 		
 		if cast_end then -- 正在施法
 			if cast_end/1000 < self.exp then -- 当不用打断
@@ -1588,12 +1600,12 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 	
 	
 	if t == "HL_Auras" then
-		local debuff_dur = select(6, UnitBuff(target, spellName))
+		local debuff_dur = select(5, AuraUtil.FindAuraByName(spellName, target, "HELPFUL"))
 		if not debuff_dur then return end
 		
 		frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")			
 		frame:SetScript("OnEvent", function(self, event, ...) 
-			local _, Event_type, _, _, _, _, _, _, DestName, _, _, SpellID = ...
+			local _, Event_type, _, _, _, _, _, _, DestName, _, _, SpellID = CombatLogGetCurrentEventInfo()
 			if Event_type == "SPELL_AURA_REMOVED" and SpellID == spellID and DestName then
 				local Tar = string.split("-", DestName)
 				if Tar == target then
@@ -1657,7 +1669,7 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 		frame:RegisterEvent("UNIT_SPELLCAST_STOP")
 		
 		frame:SetScript("OnEvent", function(self, event, ...) 
-			local Unit, Spell, _, _, SpellID = ...
+			local Unit, _, SpellID = ...
 			if SpellID == spellID and UnitGUID(Unit) == sourceGUID then
 				ActionButton_HideOverlayGlow(frame)
 				frame:Hide()
@@ -1790,22 +1802,22 @@ end
 
 T.Create_HL_EventFrame = function(parent, v, t)
 	local frame = CreateFrame("Frame", addon_name.."HL_EventFrame"..v, FrameHolder)
-	frame:RegisterEvent("WORLD_MAP_UPDATE")
+	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 	frame.map_id, frame.spell_id = strsplit("_", v)
 	frame.map_id = tonumber(frame.map_id)
 	frame.spell_id = tonumber(frame.spell_id)
 	
 	if t == "HL_Auras" then
 		frame:SetScript("OnEvent", function(self, e, ...)
-			if e == "WORLD_MAP_UPDATE" then
-				local map = GetCurrentMapAreaID()
+			if e == "PLAYER_ENTERING_WORLD" then
+				local map = select(8, GetInstanceInfo())
 				if map == frame.map_id then
 					frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 				else
 					frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 				end
 			else
-				local _, Event_type, _, sourceGUID, _, _, _, _, DestName, _, _, SpellID = ...
+				local _, Event_type, _, sourceGUID, _, _, _, _, DestName, _, _, SpellID = CombatLogGetCurrentEventInfo()
 				if SpellID == frame.spell_id and Event_type == "SPELL_AURA_APPLIED" and DestName then
 					local target = string.split("-", DestName)
 					T.HL_OnRaid(v, t, target, sourceGUID)
@@ -1814,15 +1826,15 @@ T.Create_HL_EventFrame = function(parent, v, t)
 		end)
 	elseif t == "HL_Cast" then
 		frame:SetScript("OnEvent", function(self, e, ...)
-			if e == "WORLD_MAP_UPDATE" then
-				local map = GetCurrentMapAreaID()
+			if e == "PLAYER_ENTERING_WORLD" then
+				local map = select(8, GetInstanceInfo())
 				if map == frame.map_id then
 					frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 				else
 					frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 				end
 			else
-				local _, Event_type, _, sourceGUID, _, _, _, _, DestName, _, _, SpellID = ...
+				local _, Event_type, _, sourceGUID, _, _, _, _, DestName, _, _, SpellID = CombatLogGetCurrentEventInfo()
 				if SpellID == frame.spell_id and Event_type == "SPELL_CAST_SUCCESS" and DestName then
 					local target = string.split("-", DestName)
 					T.HL_OnRaid(v, t, target, sourceGUID)
@@ -1831,8 +1843,8 @@ T.Create_HL_EventFrame = function(parent, v, t)
 		end)
 	elseif t == "HL_Casting" then
 		frame:SetScript("OnEvent", function(self, e, ...)
-			if e == "WORLD_MAP_UPDATE" then
-				local map = GetCurrentMapAreaID()
+			if e == "PLAYER_ENTERING_WORLD" then
+				local map = select(8, GetInstanceInfo())
 				if map == frame.map_id then
 					frame:RegisterEvent("UNIT_SPELLCAST_START")
 					frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
@@ -1841,7 +1853,7 @@ T.Create_HL_EventFrame = function(parent, v, t)
 					frame:UnregisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 				end
 			elseif e == "UNIT_SPELLCAST_START" or e == "UNIT_SPELLCAST_CHANNEL_START" then
-				local Unit, Spell, _, _, SpellID = ...
+				local Unit, _, SpellID = ...
 				if SpellID == frame.spell_id then
 					C_Timer.After(.1, function()
 						local target = UnitName(Unit.."target")
@@ -1962,7 +1974,7 @@ local function UpdateSpellIcon(event, event_SpellID, button, unit, spellID, cd)
 	button.cast.spell:SetText(spell_name)
 		
 	if event == "UNIT_SPELLCAST_START" or event == "all" then
-		local _, _, _, _, startTimeMS, endTimeMS, _, _, notInterruptible, casting_spellID = UnitCastingInfo(unit)
+		local _, _, _, startTimeMS, endTimeMS, _, _, notInterruptible, casting_spellID = UnitCastingInfo(unit)
 		if casting_spellID == spellID then			
 			if notInterruptible then
 				button.cast.overlay:SetVertexColor(1, 0, 0)
@@ -1982,8 +1994,8 @@ local function UpdateSpellIcon(event, event_SpellID, button, unit, spellID, cd)
 			button.cast:Show()
 			if cd == 1 then button:Show() end
 		end
-	elseif event == "UNIT_SPELLCAST_START" or event == "all" then
-		local _, _, _, _, startTimeMS, endTimeMS, _, _, notInterruptible, casting_spellID = UnitChannelInfo(unit)
+	elseif event == "UNIT_SPELLCAST_CHANNEL_START" or event == "all" then
+		local _, _, _, startTimeMS, endTimeMS, _, _, notInterruptible, casting_spellID = UnitChannelInfo(unit)
 		if casting_spellID == spellID then
 			if notInterruptible then
 				button.cast.overlay:SetVertexColor(1, 0, 0)
@@ -2039,7 +2051,7 @@ local function UpdateSpells(unitFrame, event, event_SpellID)
 end
 
 local function UpdateAuraIcon(button, unit, index, filter)
-	local name, _, icon, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura(unit, index, filter)
+	local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura(unit, index, filter)
 
 	button.icon:SetTexture(icon)
 	button.expirationTime = expirationTime
@@ -2081,7 +2093,7 @@ local function UpdateAuras(unitFrame)
 	
 	for index = 1, 20 do
 		if i <= 5 then			
-			local bname, _, _, _, _, bduration, _, bcaster, _, _, bspellid = UnitAura(unit, index, 'HELPFUL')
+			local bname, _, _, _, bduration, _, bcaster, _, _, bspellid = UnitAura(unit, index, 'HELPFUL')
 			if bname and SMT_CDB["PlateAuras"][bspellid] then
 				if not unitFrame.icons.Aura_Icons[i] then
 					unitFrame.icons.Aura_Icons[i] = CreateIcon(unitFrame.icons, "aura"..i)
@@ -2094,7 +2106,7 @@ local function UpdateAuras(unitFrame)
 	
 	for index = 1, 20 do
 		if i <= 5 then
-			local dname, _, _, _, _, dduration, _, dcaster, _, _, dspellid = UnitAura(unit, index, 'HARMFUL')	
+			local dname, _, _, _, dduration, _, dcaster, _, _, dspellid = UnitAura(unit, index, 'HARMFUL')	
 			if dname and SMT_CDB["PlateAuras"][dspellid] then
 				if not unitFrame.icons.Aura_Icons[i] then
 					unitFrame.icons.Aura_Icons[i] = CreateIcon(unitFrame.icons, "aura"..i)
@@ -2191,7 +2203,7 @@ local function UpdateSanguine(unitFrame)
 	
 	local unit = unitFrame.unit
 	
-	if UnitBuff(unit, GetSpellInfo(226510)) then
+	if AuraUtil.FindAuraByName(GetSpellInfo(226510), unit, "HELPFUL") then
 		if not unitFrame.icons.sanguineicon then
 			unitFrame.icons.sanguineicon = CreateIcon(unitFrame.icons, "sanguine")
 		end
@@ -2208,7 +2220,7 @@ local function UpdateRaging(unitFrame)
 	
 	local unit = unitFrame.unit
 	
-	if UnitBuff(unit, GetSpellInfo(228318)) then
+	if AuraUtil.FindAuraByName(GetSpellInfo(228318), unit, "HELPFUL") then
 		if not unitFrame.icons.ragingicon then
 			unitFrame.icons.ragingicon = CreateIcon(unitFrame.icons, "raging")
 		end
@@ -2235,7 +2247,7 @@ local function NamePlate_OnEvent(self, event, arg1, ...)
 	elseif event == "UNIT_POWER_FREQUENT" and arg1 == self.unit then
 		UpdatePower(self)
 	elseif CastingEvents[event] and arg1 == self.unit then		
-		local event_SpellID = select(4, ...)
+		local event_SpellID = select(2, ...)
 		UpdateSpells(self, event, event_SpellID)
 	end
 end
@@ -2470,7 +2482,7 @@ ChatMsgEventFrame:SetScript("OnEvent", function(self, event, ...)
 	if SMT_CDB["General"]["disable_all"] then return end
 	
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		local _, Event_type, _, _, _, _, _, _, DestName, _, _, SpellID = ...
+		local _, Event_type, _, _, _, _, _, _, DestName, _, _, SpellID = CombatLogGetCurrentEventInfo()
 		if Event_type == "SPELL_AURA_APPLIED" and DestName == G.PlayerName then
 			if SMT_CDB["ChatMsgAuras"][SpellID] then
 				local spell_name = GetSpellInfo(SpellID)

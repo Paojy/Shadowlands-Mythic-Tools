@@ -106,8 +106,8 @@ local ReskinSlider = function(f)
 	T.createbdframe(bd)
 
 	local slider = select(4, f:GetRegions())
-	slider:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-	slider:SetBlendMode("ADD")
+	--slider:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+	--slider:SetBlendMode("ADD")
 end
 
 local createslider = function(parent, x, y, name, t1, t2, value, min, max, step)
@@ -693,7 +693,7 @@ end
 ----------------------------------------------------------
 
 local gui = CreateFrame("Frame", addon_name.."_GUI", UIParent)
-gui:SetSize(600, 700)
+gui:SetSize(700, 700)
 gui:SetScale(1)
 gui:SetPoint("CENTER", UIParent, "CENTER")
 gui:SetFrameStrata("HIGH")
@@ -727,8 +727,8 @@ G.gui = gui
 --------------[[     General Settings     ]]--------------
 ----------------------------------------------------------
 gui.tabindex = 1
-gui.tabnum = 16
-for i = 1, 16 do
+gui.tabnum = 27
+for i = 1, 27 do
 	gui["tab"..i] = CreateFrame("Frame", addon_name.."GUI Tab"..i, gui)
 	gui["tab"..i]:SetScript("OnMouseDown", function() end)
 end
@@ -835,10 +835,10 @@ options.PlateAlerts_enable.apply = function() T.EditPlateIcons("enable") end
 options.PlateAlerts_size = createslider(options.sfa, 60, -550, L["图标大小"], "PlateAlerts", false, "size", 20, 50, 1)
 options.PlateAlerts_size.apply = function() T.EditPlateIcons("icon_size") end
 
-options.PlateAlerts_fsize = createslider(options.sfa, 220, -550, L["字体大小"], "PlateAlerts", false, "fsize", 6, 16, 1)
+options.PlateAlerts_fsize = createslider(options.sfa, 270, -550, L["字体大小"], "PlateAlerts", false, "fsize", 6, 16, 1)
 options.PlateAlerts_fsize.apply = function() T.EditPlateIcons("font_size") end
 
-options.PlateAlerts_y = createslider(options.sfa, 380, -550, L["垂直距离"], "PlateAlerts", false, "y", -50, 50, 1)
+options.PlateAlerts_y = createslider(options.sfa, 480, -550, L["垂直距离"], "PlateAlerts", false, "y", -50, 50, 1)
 options.PlateAlerts_y.apply = function() T.EditPlateIcons("y") end
 
 local function CreateAffixNPOptions(v, affix_id, x, y)
@@ -901,19 +901,19 @@ options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
 options.CD_Icons_size = createslider(options.sfa, 60, -820, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
 options.CD_Icons_size.apply = function() T.EditCDBar("size") end
 
-options.CD_Icons_space = createslider(options.sfa, 220, -820, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
+options.CD_Icons_space = createslider(options.sfa, 270, -820, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
 options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_num = createslider(options.sfa, 380, -820, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
+options.CD_Icons_num = createslider(options.sfa, 480, -820, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
 options.CD_Icons_num.apply = function() T.EditCDBar("pos") end
 
 options.CD_Icons_x = createslider(options.sfa, 60, -860, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
 options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_y = createslider(options.sfa, 220, -860, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
+options.CD_Icons_y = createslider(options.sfa, 270, -860, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
 options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_alpha = createslider(options.sfa, 380, -860, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
+options.CD_Icons_alpha = createslider(options.sfa, 480, -860, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
 options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
 
 ----------------------------------------------------------
