@@ -864,6 +864,7 @@ end
 
 CreateAffixNPOptions("Explosive_np", 13, 40, -580)
 CreateAffixNPOptions("Bolster_np", 7, 240, -580)
+CreateAffixNPOptions("Ghuun_np", 16, 440, -580)
 CreateAffixNPOptions("Sanguine_np", 8, 40, -610)
 CreateAffixNPOptions("Raging_np", 6, 240, -610)
 
@@ -892,11 +893,11 @@ T.CreateTitle(options.sfa, L["小队减伤CD"], -750)
 options.CD_Icons_enable = createcheckbutton(options.sfa, 40, -780, L["启用"], "CD_Icons", false, "enable")
 options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
 
-options.CD_Icons_grow_dir = createradiobuttongroup(options.sfa, 150, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
-options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
-
-options.CD_Icons_hideinraid = createcheckbutton(options.sfa, 380, -780, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
+options.CD_Icons_hideinraid = createcheckbutton(options.sfa, 130, -780, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
 options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
+
+options.CD_Icons_grow_dir = createradiobuttongroup(options.sfa, 300, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
+options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
 
 options.CD_Icons_size = createslider(options.sfa, 60, -820, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
 options.CD_Icons_size.apply = function() T.EditCDBar("size") end

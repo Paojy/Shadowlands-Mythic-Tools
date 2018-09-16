@@ -11,7 +11,7 @@ G.Dungeons[777] = {
 			},
 			PlateAlert = { -- 姓名板图标
 				[774] = "PlateAuras",  -- 光环
-				[69607] = "PlateSpells",  -- 技能
+				[69607] = "PlateSpells",  -- 技能	
 				[1] = "PlatePower",  -- 能量
 			},
 			ChatMsg = {
@@ -20,7 +20,7 @@ G.Dungeons[777] = {
 			},
 		},
 		cd = {
-			[69607] = 1, -- 姓名板技能的CD
+			[69607] = 5, -- 姓名板技能的CD
 		},
 	},
 	{ -- 测试2
@@ -54,6 +54,17 @@ G.Dungeons[777] = {
 				["1544_bmsg_hl_48438"] = {"CHAT_MSG_SAY", "48438", 3}, 
 			},
 		},
+	},	
+	{ -- 测试4
+		id = 112575,
+		alerts = {
+			PlateAlert = {
+				[224098] = "PlateSpells", 
+			},
+		},
+		cd = {
+			[224098] = 5,
+		},	
 	},
 }
 

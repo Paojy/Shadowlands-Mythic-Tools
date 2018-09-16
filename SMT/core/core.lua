@@ -1959,6 +1959,8 @@ local function CreateIcon(parent, tag)
 		button.icon:SetTexture(136124)
 	elseif strfind(tag, "raging") then
 		button.icon:SetTexture(132117)
+	elseif strfind(tag, "ghuun") then
+		button.icon:SetTexture(2032223)
 	end
 	
 	button:Hide()
@@ -2230,6 +2232,23 @@ local function UpdateRaging(unitFrame)
 	end
 end
 
+local function UpdateGhuun(unitFrame)
+	if not unitFrame.unit or SMT_CDB["General"]["disable_all"] or not SMT_CDB["PlateAlerts"]["enable"] or not SMT_CDB["PlateAlerts"]["Ghuun_np"] then return end
+	
+	if not C_ChallengeMode.GetActiveKeystoneInfo() or select(4, C_ChallengeMode.GetActiveKeystoneInfo())[2] ~= 16 then return end
+	
+	local unit = unitFrame.unit
+	
+	if AuraUtil.FindAuraByName(GetSpellInfo(277242), unit, "HELPFUL") then
+		if not unitFrame.icons.ghuunicon then
+			unitFrame.icons.ghuunicon = CreateIcon(unitFrame.icons, "ghuun")
+		end
+		unitFrame.icons.ghuunicon:Show()
+	elseif unitFrame.icons.ghuunicon and unitFrame.icons.ghuunicon:IsShown() then
+		unitFrame.icons.ghuunicon:Hide()
+	end
+end
+
 local function NamePlate_OnEvent(self, event, arg1, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
 		UpdateAuras(self)
@@ -2440,6 +2459,9 @@ T.EditPlateIcons = function(tag)
 			end
 			if frame.ragingicon then
 				frame.ragingicon:SetSize(SMT_CDB["PlateAlerts"]["size"], SMT_CDB["PlateAlerts"]["size"])
+			end
+			if frame.ghuunicon then
+				frame.ghuunicon:SetSize(SMT_CDB["PlateAlerts"]["size"], SMT_CDB["PlateAlerts"]["size"])
 			end
 			frame.LineUpIcons()
 		end

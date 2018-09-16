@@ -43,6 +43,7 @@ local Character_default_Settings = {
 		Bolster_np = true, -- 激励姓名板图标
 		Sanguine_np = true, -- 血池姓名板图标
 		Raging_np = true, -- 暴怒姓名板图标
+		Ghuun_np = true, -- 戈霍恩共生体姓名板图标
 	},
 	
 	CD_Icons = {
