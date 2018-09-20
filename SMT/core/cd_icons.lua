@@ -197,14 +197,14 @@ local function CreateCDBar(unit)
 			local hasGrid2 = IsAddOnLoaded("Grid2")
 			local hasCompactRaid = IsAddOnLoaded("CompactRaid")
 			local hasVuhDo = IsAddOnLoaded("VuhDo")
-			local hasElvUI = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
+			local hasElvUI = _G["ElvUF_Party"] and _G["ElvUF_Party"]:IsVisible()
 			local hasAltzUI = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
 			local hasNDui = IsAddOnLoaded("NDui") and NDuiDB["UFs"]["RaidFrame"]
 			
 			if hasElvUI then
 				for i=1, 8 do
 					for j=1, 5 do
-						local uf = _G["ElvUF_RaidGroup"..i.."UnitButton"..j]
+						local uf = _G["ElvUF_PartyGroup"..i.."UnitButton"..j]
 						if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
 							if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
 								f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
