@@ -197,25 +197,47 @@ local function CreateCDBar(unit)
 			local hasGrid2 = IsAddOnLoaded("Grid2")
 			local hasCompactRaid = IsAddOnLoaded("CompactRaid")
 			local hasVuhDo = IsAddOnLoaded("VuhDo")
-			local hasElvUI = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
-			local hasAltzUI = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
+			local hasElvUIRaid = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
+			local hasElvUIParty = _G["ElvUF_Party"] and _G["ElvUF_Party"]:IsVisible()
+			 local hasAltzUIRaid = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
+			local hasAltzUIParty = _G["Altz_Party"] and _G["Altz_Party"]:IsVisible()
 			local hasNDui = IsAddOnLoaded("NDui") and NDuiDB["UFs"]["RaidFrame"]
 			
-			if hasElvUI then
-				for i=1, 8 do
-					for j=1, 5 do
-						local uf = _G["ElvUF_RaidGroup"..i.."UnitButton"..j]
-						if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
-							if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
-								f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
-							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
-								f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
-							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
-								f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
-							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
-								f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+			if hasElvUIRaid or hasElvUIParty then
+				if hasElvUIParty then
+					for i=1, 8 do
+						for j=1, 5 do
+							local uf = _G["ElvUF_PartyGroup"..i.."UnitButton"..j]
+							if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
+								if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
+									f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+								elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
+									f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+								elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
+									f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+								elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
+									f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+								end
+								break
 							end
-							break
+						end
+					end
+				else
+					for i=1, 8 do
+						for j=1, 5 do
+							local uf = _G["ElvUF_RaidGroup"..i.."UnitButton"..j]
+							if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
+								if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
+									f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+								elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
+									f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+								elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
+									f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+								elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
+									f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+								end
+								break
+							end
 						end
 					end
 				end
@@ -274,7 +296,7 @@ local function CreateCDBar(unit)
 					local uf = _G["Vd1H"..i]
 					if uf and uf.raidid and UnitIsUnit(uf.raidid, unit) then
 						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
-						f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
 						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
 							f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
 						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
@@ -285,20 +307,37 @@ local function CreateCDBar(unit)
 						break
 					end
 				end
-			elseif hasAltzUI then
-				for i = 1, 40 do
-					local uf = _G["Altz_HealerRaidUnitButton"..i]
-					if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
-						if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
-							f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
-						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
-							f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
-						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
-							f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
-						elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
-							f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+			elseif hasAltzUIRaid or hasAltzUIParty then
+				if hasAltzUIParty then
+					for i = 1, 5 do
+						local uf = _G["Altz_PartyUnitButton"..i]
+						if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
+							if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
+								f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
+								f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
+								f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
+								f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+							end
 						end
-						break
+					end
+				else
+					for i = 1, 40 do
+						local uf = _G["Altz_HealerRaidUnitButton"..i]
+						if uf and uf.unit and UnitIsUnit(uf.unit, unit) then
+							if SMT_CDB["CD_Icons"]["grow_dir"] == "RIGHT" then
+								f:SetPoint("RIGHT", uf, "LEFT", -SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "LEFT" then
+								f:SetPoint("LEFT", uf, "RIGHT", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "BOTTOM" then
+								f:SetPoint("BOTTOM", uf, "TOP", SMT_CDB["CD_Icons"]["x"], SMT_CDB["CD_Icons"]["y"])
+							elseif SMT_CDB["CD_Icons"]["grow_dir"] == "TOP" then
+								f:SetPoint("TOP", uf, "BOTTOM", SMT_CDB["CD_Icons"]["x"], -SMT_CDB["CD_Icons"]["y"])
+							end
+							break
+						end
 					end
 				end
 			elseif hasNDui then
