@@ -63,7 +63,7 @@ end
 T.GetIconLink = function(spellID)
 	if not GetSpellInfo(spellID) then
 		print(spellID.."出错 请检查")
-		return ""
+		return spellID.."出错"
 	end
 	local icon = select(3, GetSpellInfo(spellID))
 	return "|T"..icon..":12:12:0:0:64:64:4:60:4:60|t"..GetSpellLink(spellID)
@@ -120,7 +120,7 @@ end
 T.createborder = function(f, r, g, b)
 	if f.style then return end
 	
-	f.sd = CreateFrame("Frame", nil, f)
+	f.sd = CreateFrame("Frame", nil, f, "BackdropTemplate")
 	local lvl = f:GetFrameLevel()
 	f.sd:SetFrameLevel(lvl == 0 and 1 or lvl - 1)
 	f.sd:SetBackdrop({
@@ -145,21 +145,21 @@ T.createbdframe = function(f)
 	local bg
 	
 	if f:GetObjectType() == "Texture" then
-		bg = CreateFrame("Frame", nil, f:GetParent())
+		bg = CreateFrame("Frame", nil, f:GetParent(), "BackdropTemplate")
 	else
-		bg = CreateFrame("Frame", nil, f)
+		bg = CreateFrame("Frame", nil, f, "BackdropTemplate")
 		local lvl = f:GetFrameLevel()
 		bg:SetFrameLevel(lvl == 0 and 1 or lvl - 1)
 	end
 	
-	bg:SetPoint("TOPLEFT", f, -1, 1)
-	bg:SetPoint("BOTTOMRIGHT", f, 1, -1)
+	bg:SetPoint("TOPLEFT", f, -3, 3)
+	bg:SetPoint("BOTTOMRIGHT", f, 3, -3)
 	
 	bg:SetBackdrop({
 		bgFile = "Interface\\Buttons\\WHITE8x8",
-		edgeFile = "Interface\\Buttons\\WHITE8x8",
-		edgeSize = 1,
-			insets = { left = 1, right = 1, top = 1, bottom = 1,}
+		edgeFile = "Interface\\AddOns\\SMT\\media\\glow",
+		edgeSize = 3,
+			insets = { left = 3, right = 3, top = 3, bottom = 3,}
 		})
 		
 	bg:SetBackdropColor(.05, .05, .05, .5)
@@ -202,4 +202,184 @@ T.createUIPanelButton = function(parent, name, width, height, text)
 	end)
 	
 	return button
+end
+
+local blizzTextures = {
+	"Inset",
+	"inset",
+	"InsetFrame",
+	"LeftInset",
+	"RightInset",
+	"NineSlice",
+	"BG",
+	"border",
+	"Border",
+	"Background",
+	"BorderFrame",
+	"bottomInset",
+	"BottomInset",
+	"bgLeft",
+	"bgRight",
+	"FilligreeOverlay",
+	"PortraitOverlay",
+	"ArtOverlayFrame",
+	"Portrait",
+	"portrait",
+	"ScrollFrameBorder",
+	"ScrollUpBorder",
+	"ScrollDownBorder",
+}
+
+T.HiddenFrame = CreateFrame("Frame")
+T.HiddenFrame:Hide()
+	
+T.HideObject = function(self)
+	if self.UnregisterAllEvents then
+		self:UnregisterAllEvents()
+		self:SetParent(T.HiddenFrame)
+	else
+		self.Show = self.Hide
+	end
+	self:Hide()
+end
+	
+T.StripTextures = function(self, kill)
+	local frameName = self.GetName and self:GetName()
+	for _, texture in pairs(blizzTextures) do
+		local blizzFrame = self[texture] or (frameName and _G[frameName..texture])
+		if blizzFrame then
+			T.StripTextures(blizzFrame, kill)
+		end
+	end
+
+	if self.GetNumRegions then
+		for i = 1, self:GetNumRegions() do
+			local region = select(i, self:GetRegions())
+			if region and region.IsObjectType and region:IsObjectType("Texture") then
+				if kill and type(kill) == "boolean" then
+					T.HideObject(region)
+				elseif tonumber(kill) then
+					if kill == 0 then
+						region:SetAlpha(0)
+					elseif i ~= kill then
+						region:SetTexture("")
+					end
+				else
+					region:SetTexture("")
+				end
+			end
+		end
+	end
+end
+
+local blizzRegions = {
+	"Left",
+	"Middle",
+	"Right",
+	"Mid",
+	"LeftDisabled",
+	"MiddleDisabled",
+	"RightDisabled",
+	"TopLeft",
+	"TopRight",
+	"BottomLeft",
+	"BottomRight",
+	"TopMiddle",
+	"MiddleLeft",
+	"MiddleRight",
+	"BottomMiddle",
+	"MiddleMiddle",
+	"TabSpacer",
+	"TabSpacer1",
+	"TabSpacer2",
+	"_RightSeparator",
+	"_LeftSeparator",
+	"Cover",
+	"Border",
+	"Background",
+	"TopTex",
+	"TopLeftTex",
+	"TopRightTex",
+	"LeftTex",
+	"BottomTex",
+	"BottomLeftTex",
+	"BottomRightTex",
+	"RightTex",
+	"MiddleTex",
+	"Center",
+}
+
+-- Handle button
+local function Button_OnEnter(self)
+	if not self:IsEnabled() then return end
+	button.sd:SetBackdropColor(1, 1, 0, 0.2)
+	button.sd:SetBackdropBorderColor(1, 1, 0)
+end
+local function Button_OnLeave(self)
+	button.sd:SetBackdropColor(0, 0, 0, .3)
+	button.sd:SetBackdropBorderColor(0, 0, 0)
+end
+	
+T.Reskin = function(self, noHighlight, override)
+	if self.SetNormalTexture and not override then self:SetNormalTexture("") end
+	if self.SetHighlightTexture then self:SetHighlightTexture("") end
+	if self.SetPushedTexture then self:SetPushedTexture("") end
+	if self.SetDisabledTexture then self:SetDisabledTexture("") end
+
+	local buttonName = self.GetName and self:GetName()
+	for _, region in pairs(blizzRegions) do
+		region = buttonName and _G[buttonName..region] or self[region]
+		if region then
+			region:SetAlpha(0)
+		end
+	end
+
+	self.sd = T.createbdframe(self)
+	self.sd:SetFrameLevel(self:GetFrameLevel())
+	self.sd:SetAllPoints()
+
+	if not noHighlight then
+		self:HookScript("OnEnter", Button_OnEnter)
+		self:HookScript("OnLeave", Button_OnLeave)
+	end
+end
+	
+T.ReskinArrow = function(self, direction)
+	self:SetSize(16, 16)
+	T.Reskin(self, true)
+
+	self:SetDisabledTexture(G.media.blank)
+	local dis = self:GetDisabledTexture()
+	dis:SetVertexColor(0, 0, 0, .3)
+	dis:SetDrawLayer("OVERLAY")
+	dis:SetAllPoints()
+
+	local tex = self:CreateTexture(nil, "ARTWORK")
+	tex:SetSize(8, 8)
+	tex:SetPoint("CENTER")	
+	tex:SetTexture(G.media.arrowDown)
+	tex:SetVertexColor(1, 1, 1)
+	
+	self:HookScript("OnEnter", function()
+		if not self:IsEnabled() then return end
+		tex:SetVertexColor(1, 1, 0)
+	end)
+	self:HookScript("OnLeave", function()
+		tex:SetVertexColor(1, 1, 1)
+	end)
+end
+	
+T.ReskinDropDown = function(self)
+	T.StripTextures(self)
+
+	local frameName = self.GetName and self:GetName()
+	local down = self.Button or frameName and (_G[frameName.."Button"] or _G[frameName.."_Button"])
+
+	local bg = T.createbdframe(self)
+	bg:SetPoint("TOPLEFT", 16, -4)
+	bg:SetPoint("BOTTOMRIGHT", -18, 8)
+
+	down:ClearAllPoints()
+	down:SetPoint("RIGHT", bg, -2, 0)
+	T.ReskinArrow(down, "down")
 end

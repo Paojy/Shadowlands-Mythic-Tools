@@ -13,7 +13,7 @@ ns[4] = {} -- G, globals (Optionnal)
 local T, C, L, G = unpack(select(2, ...))
 
 G.addon_name = "SMT"
-G.addon_cname = "|cff87CEFASkyline|r Mythic+ Tools"
+G.addon_cname = "|cff87CEFAShadowlands|r Mythic+ Tools"
 G.addon_c = "|cff87CEFA"
 
 G.dragFrameList = {}

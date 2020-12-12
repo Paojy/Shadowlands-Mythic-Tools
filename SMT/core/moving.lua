@@ -74,111 +74,107 @@ T.createborder(Mover)
 Mover.curframe = T.createtext(Mover, "OVERLAY", 16, "OUTLINE", "LEFT")
 Mover.curframe:SetPoint("TOP", Mover, "TOP", 0, -5)
 
-local anchors = {
-	["CENTER"] = L["中间"], 
-	["LEFT"] = L["左"], 
-	["RIGHT"] = L["右"], 
-	["TOP"] = L["上"], 
-	["BOTTOM"] = L["下"], 
-	["TOPLEFT"] = L["左上"], 
-	["TOPRIGHT"] = L["右上"], 
-	["BOTTOMLEFT"] = L["左下"], 
-	["BOTTOMRIGHT"] = L["右下"],
-}
+local anchors = {"CENTER", "LEFT", "RIGHT", "TOP", "BOTTOM", "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT"}
 
-local createradiobuttongroup = function(parent, value, ...)
-	local frame = CreateFrame("Frame", G.addon_name..value.."RadioButtonGroup", parent)
-	frame:SetPoint(...)
-	frame:SetSize(300, 25)
-	
-	for k, v in pairs(anchors) do
-		frame[k] = CreateFrame("CheckButton", G.addon_name..value..k.."RadioButtonGroup", frame, "UIRadioButtonTemplate")
-		
-		_G[frame[k]:GetName() .. "Text"]:SetText(v)
-		
-		frame[k]:SetScript("OnClick", function(self)
-			if self:GetChecked() then
-				SMT_CDB["FramePoints"][CurrentFrame][value] = k
-				PlaceCurrentFrame()
+-- a1
+local Point1dropDown = CreateFrame("Frame", nil, Mover, "UIDropDownMenuTemplate")
+Point1dropDown:SetPoint("TOPLEFT", Mover, "TOPLEFT", 0, -70)
+T.ReskinDropDown(Point1dropDown)
+
+Point1dropDown.name = T.createtext(Point1dropDown, "OVERLAY", 12, "OUTLINE", "LEFT")
+Point1dropDown.name:SetPoint("BOTTOMLEFT", Point1dropDown, "TOPLEFT", 15, 5)
+Point1dropDown.name:SetText(G.addon_c..L["锚点"].."1|r")
+
+UIDropDownMenu_SetWidth(Point1dropDown, 100)
+UIDropDownMenu_SetText(Point1dropDown, "")
+
+UIDropDownMenu_Initialize(Point1dropDown, function(self, level, menuList)
+	local info = UIDropDownMenu_CreateInfo()
+	for i = 1, #anchors do
+		info.text = anchors[i]
+		info.checked = function()
+			if CurrentFrame ~= "NONE" then
+				return (SMT_CDB["FramePoints"][CurrentFrame]["a1"] == info.text)
 			end
-		end)
-	end
-	
-	for k, v in pairs(anchors) do
-		frame[k]:HookScript("OnClick", function(self)
-			for key, _ in pairs(anchors) do
-				frame[key]:SetChecked(SMT_CDB["FramePoints"][CurrentFrame][value] == key)
-			end
-		end)
-	end
-	
-	local buttons = {frame:GetChildren()}
-	for i = 1, #buttons do
-		if i == 1 then
-			buttons[i]:SetPoint("LEFT", frame, "LEFT", 10, 0)
-		else
-			buttons[i]:SetPoint("LEFT", _G[buttons[i-1]:GetName() .. "Text"], "RIGHT", 5, 0)
 		end
+		info.func = function(self)
+			SMT_CDB["FramePoints"][CurrentFrame]["a1"] = anchors[i]
+			PlaceCurrentFrame(true)
+			UIDropDownMenu_SetSelectedName(Point1dropDown, anchors[i], true)
+			UIDropDownMenu_SetText(Point1dropDown, anchors[i])
+		end
+		UIDropDownMenu_AddButton(info)
 	end
-	
-	return frame
-end
+end)
 
 -- parent
 local ParentBox = CreateFrame("EditBox", G.addon_name.."MoverParentBox", Mover)
 ParentBox:SetSize(120, 20)
-Reskinbox(ParentBox, L["锚点框体"], "parent", "TOPLEFT", Mover, "TOPLEFT", 20, -50)
+Reskinbox(ParentBox, L["锚点框体"], "parent", "LEFT", Point1dropDown, "RIGHT", -2, 2)
+
+-- a2
+local Point2dropDown = CreateFrame("Frame", nil, Mover, "UIDropDownMenuTemplate")
+Point2dropDown:SetPoint("LEFT", ParentBox, "RIGHT", -4, -2)
+T.ReskinDropDown(Point2dropDown)
+
+Point2dropDown.name = T.createtext(Point2dropDown, "OVERLAY", 12, "OUTLINE", "LEFT")
+Point2dropDown.name:SetPoint("BOTTOMLEFT", Point2dropDown, "TOPLEFT", 15, 5)
+Point2dropDown.name:SetText(G.addon_c..L["锚点"].."2|r")
+
+UIDropDownMenu_SetWidth(Point2dropDown, 100)
+UIDropDownMenu_SetText(Point2dropDown, "")
+
+UIDropDownMenu_Initialize(Point2dropDown, function(self, level, menuList)
+	local info = UIDropDownMenu_CreateInfo()
+	for i = 1, #anchors do
+		info.text = anchors[i]
+		info.checked = function()
+			if CurrentFrame ~= "NONE" then
+				return (SMT_CDB["FramePoints"][CurrentFrame]["a2"] == info.text)
+			end
+		end
+		info.func = function(self)
+			SMT_CDB["FramePoints"][CurrentFrame]["a2"] = anchors[i]
+			PlaceCurrentFrame(true)
+			UIDropDownMenu_SetSelectedName(Point2dropDown, anchors[i], true)
+			UIDropDownMenu_SetText(Point2dropDown, anchors[i])
+		end
+		UIDropDownMenu_AddButton(info)
+	end
+end)
 
 -- x
 local XBox = CreateFrame("EditBox", G.addon_name.."MoverXBox", Mover)
 XBox:SetSize(50, 20)
-Reskinbox(XBox, "X", "x", "LEFT", ParentBox, "RIGHT", 20, 0)
+Reskinbox(XBox, "X", "x", "LEFT", Point2dropDown, "RIGHT", -2, 2)
 
 -- y
 local YBox = CreateFrame("EditBox", G.addon_name.."MoverYBox", Mover)
 YBox:SetSize(50, 20)
-Reskinbox(YBox, "Y", "y", "LEFT", XBox, "RIGHT", 10, 0)
-
--- a1
-Point1buttons_text = T.createtext(Mover, "OVERLAY", 12, "NONE", "LEFT", true)
-Point1buttons_text:SetPoint("TOPLEFT", Mover, "TOPLEFT", 20, -80)
-Point1buttons_text:SetText(L["锚点"].."1")
-Point1buttons = createradiobuttongroup(Mover, "a1", "LEFT", Point1buttons_text, "RIGHT", 0, 0)
-
--- a2
-Point2buttons_text = T.createtext(Mover, "OVERLAY", 12, "NONE", "LEFT", true)
-Point2buttons_text:SetPoint("TOPLEFT", Mover, "TOPLEFT", 20, -105)
-Point2buttons_text:SetText(L["锚点"].."2")
-Point2buttons = createradiobuttongroup(Mover, "a2", "LEFT", Point2buttons_text, "RIGHT", 0, 0)
+Reskinbox(YBox, "Y", "y", "LEFT", XBox, "RIGHT", 15, 0)
 
 local function DisplayCurrentFramePoint()
 	local points = SMT_CDB["FramePoints"][CurrentFrame]
-	for k, v in pairs(anchors) do
-		Point1buttons[k]:SetChecked(SMT_CDB["FramePoints"][CurrentFrame]["a1"] == k)
-		Point2buttons[k]:SetChecked(SMT_CDB["FramePoints"][CurrentFrame]["a2"] == k)
-	end
+	UIDropDownMenu_SetText(Point1dropDown, points.a1)
+	UIDropDownMenu_SetText(Point2dropDown, points.a2)
 	ParentBox:SetText(points.parent)
 	XBox:SetText(points.x)
 	YBox:SetText(points.y)
 end
 
 local function EnableOptions()
-	for k, v in pairs(anchors) do	
-		Point1buttons[k]:Enable()
-		Point2buttons[k]:Enable()
-	end
+	UIDropDownMenu_EnableDropDown(Point1dropDown)
+	UIDropDownMenu_EnableDropDown(Point2dropDown)
 	ParentBox:Enable()
 	XBox:Enable()
 	YBox:Enable()
 end
 
 local function DisableOptions()
-	for k, v in pairs(anchors) do
-		Point1buttons[k]:SetChecked(false)
-		Point2buttons[k]:SetChecked(false)
-		Point1buttons[k]:Disable()
-		Point2buttons[k]:Disable()
-	end
+	UIDropDownMenu_SetText(Point1dropDown, "")
+	UIDropDownMenu_SetText(Point2dropDown, "")
+	UIDropDownMenu_DisableDropDown(Point1dropDown)
+	UIDropDownMenu_DisableDropDown(Point2dropDown)
 	ParentBox:Disable()
 	XBox:Disable()
 	YBox:Disable()

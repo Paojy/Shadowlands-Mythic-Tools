@@ -2,7 +2,8 @@
 
 G.Dungeons[777] = {
 	{ -- 测试1
-		id = 34696,
+		id = 126832,
+		img = 1778351, -- /dump EncounterJournalBossButton1Creature:GetTexture()
 		alerts = {
 			AlertIcon = { -- 图标提示
 				["1544_cast_no_164862"] = {}, -- 地图_类型(cast施法 com对我施法 aura光环 auras多人光环 log战斗记录 bmsg首领讯息)_是否高亮（no/hl）_法术ID
@@ -10,21 +11,22 @@ G.Dungeons[777] = {
 				["1544_com_no_19750"] = {}, 
 			},
 			PlateAlert = { -- 姓名板图标
-				[774] = "PlateAuras",  -- 光环
-				[69607] = "PlateSpells",  -- 技能	
-				[1] = "PlatePower",  -- 能量
+				PlateAuras = {
+					[774] = true,
+				},
+				PlateSpells = {
+					[69607] = 5, -- 姓名板技能的CD
+				},
+				PlatePower = true,
 			},
 			ChatMsg = {
 				[8936] = "ChatMsgAuras",  -- 受到DEBUFF喊话
 				["8936"] = "ChatMsgBossWhispers",  -- 被BOSS密语汉化
 			},
 		},
-		cd = {
-			[69607] = 5, -- 姓名板技能的CD
-		},
 	},
 	{ -- 测试2
-		id = 34689,
+		id = 126841,
 		alerts = {
 			AlertIcon = {
 				["1544_cast_hl_774"] = {},
@@ -36,16 +38,18 @@ G.Dungeons[777] = {
 				["1544_19750"] = "HL_Casting", -- 读条法术
 			},
 			PlateAlert = {
-				[8936] = "PlateAuras", 
-				[69608] = "PlateSpells", 
+				PlateAuras = {
+					[8936] = true,
+				},
+				PlateSpells = {
+					[69608] = 5, -- 姓名板技能的CD
+				},
 			},
-		},
-		cd = {
-			[69608] = 5,
 		},		
 	},
 	{ -- 测试3
-		id = 96444,
+		id = 126848,
+		img = 1778346,
 		alerts = {
 			AlertIcon = {
 				["1544_aura_hl_774"] = {"HELPFUL", "player"}, 
@@ -56,15 +60,14 @@ G.Dungeons[777] = {
 		},
 	},	
 	{ -- 测试4
-		id = 112575,
+		id = 126847,
 		alerts = {
 			PlateAlert = {
-				[224098] = "PlateSpells", 
+				PlateAuras = {
+					[224098] = true, -- 姓名板技能的CD
+				}
 			},
 		},
-		cd = {
-			[224098] = 5,
-		},	
 	},
 }
 

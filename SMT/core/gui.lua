@@ -85,6 +85,7 @@ local createcheckbutton = function(parent, x, y, name, t1, t2, value)
 	
 	return bu
 end
+T.createcheckbutton = createcheckbutton
 
 local function TestSlider_OnValueChanged(self, value)
    if not self._onsetting then   -- is single threaded 
@@ -172,16 +173,14 @@ end
 local ReskinRadio = function(f)
 	f:SetNormalTexture("")
 	f:SetHighlightTexture("")
-	f:SetCheckedTexture("Spells\\T_Star3")
+	f:SetCheckedTexture(G.media.blank)
 
 	local ch = f:GetCheckedTexture()
-	ch:SetPoint("TOPLEFT", -3, 3)
-	ch:SetPoint("BOTTOMRIGHT", 3, -3)
-	ch:SetBlendMode("ADD")
-	ch:SetTexCoord( 0, 1, 0, 1)
-	ch:SetVertexColor(0, 1, 0, .6)
+	ch:SetPoint("TOPLEFT", 3, -3)
+	ch:SetPoint("BOTTOMRIGHT", -3, 3)
+	ch:SetAlpha(.5)
 
-	local bd = CreateFrame("Frame", nil, f)
+	local bd = CreateFrame("Frame", nil, f, "BackdropTemplate")
 	bd:SetPoint("TOPLEFT", 3, -3)
 	bd:SetPoint("BOTTOMRIGHT", -3, 3)
 	bd:SetFrameLevel(f:GetFrameLevel()-1)
@@ -197,6 +196,7 @@ local ReskinRadio = function(f)
 	f:HookScript("OnEnter", function() f.bd:SetBackdropBorderColor(0, 1, 0) end)
 	f:HookScript("OnLeave", function() f.bd:SetBackdropBorderColor(0, 0, 0) end)
 end
+T.ReskinRadio = ReskinRadio
 
 local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group)
 	local frame
@@ -467,7 +467,7 @@ T.Create_HLOnRaid_Options = function(parent, v, t)
 	local _, spellID = string.split("_", v)
 	spellID = tonumber(spellID)
 	local str
-	if t == "HL_Casting" then
+	if t == "HL_Casting" or t == "HL_Cast" then
 		str = string.format(L["显示高亮图标施法"], T.GetIconLink(spellID))
 	else
 		str = string.format(L["显示高亮图标光环"], T.GetIconLink(spellID))
@@ -553,7 +553,6 @@ T.Create_ChatMsg_Options = function(parent, v, t)
 	bu:Hide()
 	table.insert(parent.options, bu)
 end
-
 
 local scanTooltip = CreateFrame("GameTooltip", "NPCNameToolTip", nil, "GameTooltipTemplate") --fake tooltipframe used for reading localized npc names -- by lunaic
 
@@ -644,17 +643,19 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 				T.Create_HL_EventFrame(mf, v, t)
 			end
 		elseif Alert_Type == "PlateAlert" then
-			for v, t in T.pairsByKeys(Alerts) do
-				if t == "PlatePower" then
-					if SMT_CDB[t][id] == nil then
-						SMT_CDB[t][id] = true
+			for sub_type, t in T.pairsByKeys(Alerts) do
+				if sub_type == "PlatePower" then
+					if SMT_CDB[sub_type][id] == nil then
+						SMT_CDB[sub_type][id] = true
 					end
-					T.Create_PlateAlert_Options(mf, id, t)
+					T.Create_PlateAlert_Options(mf, id, sub_type)
 				else
-					if SMT_CDB[t][v] == nil then
-						SMT_CDB[t][v] = true
+					for spellid, v in pairs(t) do
+						if SMT_CDB[sub_type][spellid] == nil then
+							SMT_CDB[sub_type][spellid] = true
+						end
+						T.Create_PlateAlert_Options(mf, spellid, sub_type)
 					end
-					T.Create_PlateAlert_Options(mf, v, t)
 				end
 			end
 		elseif Alert_Type == "ChatMsg" then
@@ -888,41 +889,41 @@ end
 CreateAffixTextOptions("Quaking", 14, 40, -720)
 CreateAffixTextOptions("Explosive", 13, 240, -720)
 
-T.CreateTitle(options.sfa, L["小队减伤CD"], -750)
+local CD_options = T.CreateOptions(L["小队减伤CD"], gui, true)
+gui.CD_options = CD_options
 
-options.CD_Icons_enable = createcheckbutton(options.sfa, 40, -780, L["启用"], "CD_Icons", false, "enable")
-options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
+T.CreateTitle(CD_options.sfa, L["小队减伤CD"], -20)
 
-options.CD_Icons_hideinraid = createcheckbutton(options.sfa, 130, -780, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
-options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
+CD_options.CD_Icons_enable = createcheckbutton(CD_options.sfa, 40, -50, L["启用"], "CD_Icons", false, "enable")
+CD_options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
 
-options.CD_Icons_grow_dir = createradiobuttongroup(options.sfa, 300, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
-options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_hideinraid = createcheckbutton(CD_options.sfa, 130, -50, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
+CD_options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
 
-options.CD_Icons_size = createslider(options.sfa, 60, -820, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
-options.CD_Icons_size.apply = function() T.EditCDBar("size") end
+CD_options.CD_Icons_grow_dir = createradiobuttongroup(CD_options.sfa, 300, -56, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
+CD_options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_space = createslider(options.sfa, 270, -820, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
-options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_size = createslider(CD_options.sfa, 60, -90, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
+CD_options.CD_Icons_size.apply = function() T.EditCDBar("size") end
 
-options.CD_Icons_num = createslider(options.sfa, 480, -820, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
-options.CD_Icons_num.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_space = createslider(CD_options.sfa, 270, -90, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
+CD_options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_x = createslider(options.sfa, 60, -860, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
-options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_x = createslider(CD_options.sfa, 60, -130, L["水平位置偏移"], "CD_Icons", false, "x", -50, 50, 1)
+CD_options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_y = createslider(options.sfa, 270, -860, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
-options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_y = createslider(CD_options.sfa, 270, -130, L["垂直位置偏移"], "CD_Icons", false, "y", -50, 50, 1)
+CD_options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_alpha = createslider(options.sfa, 480, -860, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
-options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
+CD_options.CD_Icons_alpha = createslider(CD_options.sfa, 480, -130, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
+CD_options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
 
+T.CreateTitle(CD_options.sfa, L["减伤类型"], -170)
 ----------------------------------------------------------
 --------------------[[     CMD     ]]---------------------
 ----------------------------------------------------------
 
 SLASH_SMT1 = "/smt"
-SLASH_SMT2 = "/skyline"
 SlashCmdList["SMT"] = function(arg)
 	if gui:IsShown() then
 		gui:Hide()
@@ -930,3 +931,19 @@ SlashCmdList["SMT"] = function(arg)
 		gui:Show()
 	end
 end
+
+local MinimapButton = CreateFrame("Button", "SMT MinimapButton", Minimap)
+MinimapButton:SetSize(16, 16)
+MinimapButton:SetPoint("TOPLEFT", Minimap, "TOPLEFT")
+MinimapButton:SetScript("OnClick", function()
+	if gui:IsShown() then
+		gui:Hide()
+	else
+		gui:Show()
+	end
+end)
+
+MinimapButton.tex = MinimapButton:CreateTexture(nil, "OVERLAY")
+MinimapButton.tex:SetAllPoints(MinimapButton)
+MinimapButton.tex:SetTexture(461790)
+MinimapButton.tex:SetTexCoord( .2, .8, .2, .8)

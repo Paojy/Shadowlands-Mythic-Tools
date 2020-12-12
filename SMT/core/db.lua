@@ -50,12 +50,32 @@ local Character_default_Settings = {
 		enable = true,
 		icon_size = 40,
 		icon_space = 4,
-		icon_num = 4,
 		grow_dir = "RIGHT",
 		hide_in_raid = true,
 		x = 5,
 		y = 0,
 		alpha = 20,
+	},
+	
+	typeToTrack = {
+		INTERRUPT = true,
+		HARDCC = true,
+		SOFTCC = true,
+		STHARDCC = true,
+		STSOFTCC = true,
+		DISPEL = true,
+		DEFMDISPEL = true,
+		EXTERNAL = true,
+		HEALING = true,
+		UTILITY = true,
+		PERSONAL = true,
+		IMMUNITY = true,
+		DAMAGE = true,
+		TANK = true,
+	},
+	
+	spellToTrack = {
+	
 	},
 	
 	Icons = {
@@ -162,14 +182,15 @@ eventframe:SetScript("OnEvent", function(self, event, ...)
 			for i = 1, #data do
 				if data[i]["alerts"] then
 					T.CreateMobOptions(option_page, data[i]["id"], data[i]["alerts"], data[i]["img"])
-				end
-				if data[i]["cd"] then
-					local CreatureID = tostring(data[i]["id"])
-					G.Npc[CreatureID] = {}
-					for spell, cd in pairs(data[i]["cd"]) do
-						G.Npc[CreatureID][spell] = cd
+					if data[i]["alerts"]["PlateAlert"] and data[i]["alerts"]["PlateAlert"]["PlateSpells"] then
+						local CreatureID = tostring(data[i]["id"])
+						G.Npc[CreatureID] = {}
+						for spell, cd in pairs(data[i]["alerts"]["PlateAlert"]["PlateSpells"]) do
+							G.Npc[CreatureID][spell] = cd
+						end
 					end
 				end
+				
 			end			
 		end
 	end
