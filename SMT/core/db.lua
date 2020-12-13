@@ -180,17 +180,22 @@ eventframe:SetScript("OnEvent", function(self, event, ...)
 		local option_page = T.CreateOptions(EJ_GetInstanceInfo(id), G.gui, true)
 		if data then
 			for i = 1, #data do
+				local CreatureID = tostring(data[i]["id"])
 				if data[i]["alerts"] then
 					T.CreateMobOptions(option_page, data[i]["id"], data[i]["alerts"], data[i]["img"])
 					if data[i]["alerts"]["PlateAlert"] and data[i]["alerts"]["PlateAlert"]["PlateSpells"] then
-						local CreatureID = tostring(data[i]["id"])
 						G.Npc[CreatureID] = {}
 						for spell, cd in pairs(data[i]["alerts"]["PlateAlert"]["PlateSpells"]) do
 							G.Npc[CreatureID][spell] = cd
 						end
 					end
 				end
-				
+				if data[i]["cds"] then
+					G.Npc[CreatureID] = {}
+					for spell, cd in pairs(data[i]["cds"]) do
+						G.Npc[CreatureID][spell] = cd
+					end
+				end
 			end			
 		end
 	end
