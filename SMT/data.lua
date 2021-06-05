@@ -1315,7 +1315,13 @@ G.Dungeons[1186] = { -- 晋升
 	},
 	{ -- 弃誓审判官
 		id = 168418,
-		alerts = {
+		alerts = {		
+			AlertIcon = { -- 图标提示
+				["2285_com_hl_327648"] = {}, -- 内爆			
+			},
+			HLOnRaid = { -- 团队图标高亮
+				["2285_327648"] = "HL_Casting", -- 内爆
+			},	
 			PlateAlert = {
 				PlateSpells = {
 					[327648] = 13, -- 内爆

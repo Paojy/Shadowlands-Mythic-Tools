@@ -1553,13 +1553,17 @@ local add_HL_holder = function(f)
 	f.hl_holder.QueueIcon = function(frame, tag)
 		frame.v = tag
 		
-		frame.show = function()
+		frame.show = function(no_glow)
 			frame:Show()
-			ActionButton_ShowOverlayGlow(frame)
+			if not no_glow then
+				ActionButton_ShowOverlayGlow(frame)
+			end
 		end
 		
-		frame.hide = function()
-			ActionButton_HideOverlayGlow(frame)
+		frame.hide = function(no_glow)
+			if no_glow then
+				ActionButton_HideOverlayGlow(frame)
+			end
 			frame:Hide()
 		end
 		
@@ -1582,7 +1586,7 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 	
 	if f.hl_holder.ActiveIcons[tag] then return end
 		
-	local _, ID_str, DUR_str = strsplit("_" , v)
+	local _, ID_str, no_glow = strsplit("_" , v)
 	local spellID = tonumber(ID_str)
 	local spellName, _, spellIcon = GetSpellInfo(spellID)
 	
@@ -1609,7 +1613,7 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 			if Event_type == "SPELL_AURA_REMOVED" and SpellID == spellID and DestName then
 				local Tar = string.split("-", DestName)
 				if Tar == target then
-					frame.hide()
+					frame.hide(no_glow)
 				end
 			end
 		end)
@@ -1624,30 +1628,28 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 			
 			C_Timer.After(debuff_dur, function()
 				if frame:IsShown() then
-					frame.hide()
+					frame.hide(no_glow)
 				end
 			end)
 			
 		end
 		
-		frame.show()
+		frame.show(no_glow)
 		
 	elseif t == "HL_Cast" then
-	
-		local dur = tonumber(DUR_str)
-		
+
 		local cooldown = CreateFrame("COOLDOWN", nil, frame, "CooldownFrameTemplate")
-		cooldown:SetCooldown(GetTime(), dur)
+		cooldown:SetCooldown(GetTime(), 2)
 		cooldown:SetPoint("TOPLEFT", 4, -4)
 		cooldown:SetPoint("BOTTOMRIGHT", -4, 4)
 		cooldown:SetDrawEdge(false)
 		cooldown:SetHideCountdownNumbers(true)	
 		
-		C_Timer.After(dur, function()
-			frame.hide()
+		C_Timer.After(2, function()
+			frame.hide(no_glow)
 		end)
 		
-		frame.show()
+		frame.show(no_glow)
 		
 	elseif t == "HL_Casting" then
 	
@@ -1662,7 +1664,7 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 		
 		C_Timer.After(cast_time, function()
 			if frame:IsShown() then
-				frame.hide()
+				frame.hide(no_glow)
 			end
 		end)
 		
@@ -1671,12 +1673,11 @@ local add_Icon = function(f, v, t, target, sourceGUID)
 		frame:SetScript("OnEvent", function(self, event, ...) 
 			local Unit, _, SpellID = ...
 			if SpellID == spellID and UnitGUID(Unit) == sourceGUID then
-				ActionButton_HideOverlayGlow(frame)
-				frame:Hide()
+				frame.hide(no_glow)
 			end
 		end)
 		
-		frame.show()
+		frame.show(no_glow)
 	end
 end
 
@@ -1688,7 +1689,6 @@ T.EditHL = function()
 end
 
 T.HL_OnRaid = function(v, t, target, sourceGUID)
-
 	if SMT_CDB["General"]["disable_all"] or not SMT_CDB["HL_Frame"]["enable"] or not SMT_CDB[t][v] then return end
 	
     local hasGrid = IsAddOnLoaded("Grid")
@@ -1698,9 +1698,10 @@ T.HL_OnRaid = function(v, t, target, sourceGUID)
 	local hasElvUIRaid = _G["ElvUF_Raid"] and _G["ElvUF_Raid"]:IsVisible()
 	local hasElvUIParty = _G["ElvUF_Party"] and _G["ElvUF_Party"]:IsVisible()
     local hasAltzUIRaid = _G["Altz_HealerRaid"] and _G["Altz_HealerRaid"]:IsVisible()
-	local hasAltzUIParty = _G["Altz_Party"] and _G["Altz_Party"]:IsVisible()
-    local hasNDui = IsAddOnLoaded("NDui")
-	
+	local hasAltzUIParty = _G["Altz_Party"] and _G["Altz_Party"]:IsVisible()	
+	local hasNDuiRaid = IsAddOnLoaded("NDui") and _G["oUF_Raid1"] and _G["oUF_Raid1"]:IsVisible()
+    local hasNDuiParty = IsAddOnLoaded("NDui") and _G["oUF_Party"] and _G["oUF_Party"]:IsVisible()
+
     if hasElvUIRaid or hasElvUIParty then
 		if hasElvUIParty then
 			for i=1, 8 do
@@ -1784,16 +1785,27 @@ T.HL_OnRaid = function(v, t, target, sourceGUID)
 				end
 			end
 		end
-	elseif hasNDui then
-		for i =1, 8 do 
-            for j = 1, 5 do
-                local f = _G["oUF_Raid"..i.."UnitButton"..j]
-                if f and f.unit and UnitName(f.unit) == target then
-                    add_Icon(f, v, t, target, sourceGUID)
-                    return
-                end
-            end
-        end
+	elseif hasNDuiRaid or hasNDuiParty then
+
+		if hasNDuiParty then
+			for j = 1, 5 do
+				local f = _G["oUF_PartyUnitButton"..j]
+				if f and f.unit and UnitName(f.unit) == target then
+					add_Icon(f, v, t, target, sourceGUID)
+					return
+				end
+			end
+		elseif hasNDuiRaid then
+			for i =1, 8 do 
+				for j = 1, 5 do
+					local f = _G["oUF_Raid"..i.."UnitButton"..j]
+					if f and f.unit and UnitName(f.unit) == target then
+						add_Icon(f, v, t, target, sourceGUID)
+						return
+					end
+				end
+			end
+		end
     elseif hasCompactRaid then
         for i =1, 8 do 
             for j = 1, 5 do
@@ -1828,10 +1840,10 @@ end
 T.Create_HL_EventFrame = function(parent, v, t)
 	local frame = CreateFrame("Frame", addon_name.."HL_EventFrame"..v, FrameHolder)
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	frame.map_id, frame.spell_id = strsplit("_", v)
+	frame.map_id, frame.spell_id, frame.no_glow = strsplit("_", v)
 	frame.map_id = tonumber(frame.map_id)
 	frame.spell_id = tonumber(frame.spell_id)
-	
+
 	if t == "HL_Auras" then
 		frame:SetScript("OnEvent", function(self, e, ...)
 			if e == "PLAYER_ENTERING_WORLD" then
@@ -1860,6 +1872,7 @@ T.Create_HL_EventFrame = function(parent, v, t)
 				end
 			else
 				local _, Event_type, _, sourceGUID, _, _, _, _, DestName, _, _, SpellID = CombatLogGetCurrentEventInfo()
+				
 				if SpellID == frame.spell_id and Event_type == "SPELL_CAST_SUCCESS" and DestName then
 					local target = string.split("-", DestName)
 					T.HL_OnRaid(v, t, target, sourceGUID)
